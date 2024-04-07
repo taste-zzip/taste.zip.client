@@ -1,4 +1,4 @@
-package com.example.mainactivity
+package com.example.tastezip
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.mainactivity.ui.theme.MainActivityTheme
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.tastezip.navigation.NavRoutes
+import com.example.tastezip.screens.Login
+import com.example.tastezip.screens.Splash
+import com.example.tastezip.ui.theme.MainActivityTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +29,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    MainScreen()
                 }
             }
         }
@@ -30,17 +37,32 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun MainScreen() {
+    val navController = rememberNavController()
+
+    NavigationHost(navController = navController)
+}
+
+@Composable
+fun NavigationHost(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = NavRoutes.Splash.route
+    ) {
+        composable(NavRoutes.Splash.route) {
+            Splash(navController = navController)
+        }
+
+        composable(NavRoutes.Login.route) {
+            Login()
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     MainActivityTheme {
-        Greeting("Android")
+        MainScreen()
     }
 }
