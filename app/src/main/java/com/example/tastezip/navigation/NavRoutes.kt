@@ -1,4 +1,6 @@
 package com.example.tastezip.navigation
 
-class NavRoutes {
+sealed class NavRoutes(val route: String) {
+    data object Splash: NavRoutes("splash")
+    data object Login: NavRoutes("login")
 }
