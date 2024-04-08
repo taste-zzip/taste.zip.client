@@ -22,10 +22,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tastezip.R
 import com.example.tastezip.navigation.NavRoutes
 import com.example.tastezip.ui.theme.MainActivityTheme
+import com.example.tastezip.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun Splash(navController: NavHostController) {
+fun Splash(navController: NavHostController, loginViewModel: LoginViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -66,6 +67,6 @@ fun Splash(navController: NavHostController) {
 @Composable
 fun SplashPreview() {
     MainActivityTheme {
-        Splash(rememberNavController())
+//        Splash(rememberNavController())
     }
 }
