@@ -89,7 +89,8 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel, cont
                 fontSize = 24.sp,
                 font = Font(R.font.pretendard_bold),
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(Alignment.CenterHorizontally),
+                color = Color.Black
             )
 
             Spacer(modifier = Modifier.size(15.dp))
@@ -100,7 +101,8 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel, cont
                 fontSize = 12.sp,
                 font = Font(R.font.pretendard_medium),
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(Alignment.CenterHorizontally),
+                color = Color.Black
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -138,13 +140,14 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel, cont
 }
 
 @Composable
-fun CustomText(text: String, fontSize: TextUnit, font: Font, modifier: Modifier = Modifier) {
+fun CustomText(text: String, fontSize: TextUnit, font: Font, modifier: Modifier = Modifier, color: Color) {
     Text(
         text = text,
         style = TextStyle(
             fontSize = fontSize,
             fontFamily = FontFamily(font)
         ),
+        color = color,
         modifier = modifier,
         textAlign = TextAlign.Center
     )
