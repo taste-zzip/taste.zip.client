@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavHostController
 import com.example.tastezip.R
+import com.example.tastezip.navigation.NavRoutes
 import com.example.tastezip.ui.theme.MainActivityTheme
 import com.example.tastezip.viewmodel.LoginViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -57,7 +58,12 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel, cont
     ) {
         loginViewModel.login(activityResult = it) {
             Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
-//            navigateToPlan()
+
+            navController.navigate(NavRoutes.UserInfo.route) {
+                popUpTo(NavRoutes.Login.route) {
+                    inclusive = true
+                }
+            }
         }
     }
 
