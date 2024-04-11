@@ -1,5 +1,7 @@
 package com.example.tastezip.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +43,7 @@ import com.example.tastezip.ui.theme.MainActivityTheme
 import com.example.tastezip.viewmodel.UserInfoViewModel
 
 @Composable
-fun UserInfo(userInfoViewModel: UserInfoViewModel) {
+fun UserInfo(userInfoViewModel: UserInfoViewModel, context: Context) {
     var nickname by remember{ mutableStateOf("") }
     var oneLineInfo by remember { mutableStateOf("") }
 
@@ -67,6 +69,19 @@ fun UserInfo(userInfoViewModel: UserInfoViewModel) {
 
     val thirdCheckedChange = { checked: Boolean ->
         thirdChecked = checked
+    }
+
+    val btnCompleteListener = {
+
+        if (firstChecked && secondChecked && nickname.isNotEmpty() && oneLineInfo.isNotEmpty()) {
+            userInfoViewModel.saveUserInfo(nickname, oneLineInfo)
+
+            Toast.makeText(context, "저장되었습니다.\n 닉네임: $nickname, 한 줄 소개: $oneLineInfo", Toast.LENGTH_SHORT).show()
+        } else if (firstChecked && secondChecked && nickname.isEmpty() || oneLineInfo.isEmpty()) {
+            Toast.makeText(context, "필수 항목을 채워주세요.", Toast.LENGTH_SHORT).show()
+        } else if (!firstChecked || !secondChecked) {
+            Toast.makeText(context, "필수 항목에 동의해주세요.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     Box(
@@ -142,7 +157,7 @@ fun UserInfo(userInfoViewModel: UserInfoViewModel) {
                         .padding(bottom = 10.dp)
                 ) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { btnCompleteListener() },
                         modifier = Modifier
                             .fillMaxWidth(),
                         shape = RoundedCornerShape(
@@ -223,6 +238,6 @@ fun CheckBoxText(isChecked: Boolean, text: String, onCheckedChange: (Boolean) ->
 @Composable
 fun UserInfoPreview() {
     MainActivityTheme {
-        UserInfo(hiltViewModel<UserInfoViewModel>())
+//        UserInfo(hiltViewModel<UserInfoViewModel>(), context = )
     }
 }
