@@ -74,7 +74,7 @@ fun NavigationHost(navController: NavHostController, context: Context) {
 
         composable(NavRoutes.UserInfo.route) {
             val userInfoViewModel = hiltViewModel<UserInfoViewModel>()
-            UserInfo(userInfoViewModel)
+            UserInfo(userInfoViewModel, context)
         }
     }
 }
