@@ -81,6 +81,15 @@ dependencies {
 
     kapt("com.google.dagger:hilt-compiler:2.44")
 
+    implementation("io.github.fornewid:naver-map-compose:1.5.5")
+    implementation("io.github.fornewid:naver-map-location:21.0.1")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    implementation("com.naver.maps:map-sdk:3.16.2")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")   //위치 권한 사용을 위한 라이브러리
+    implementation("com.google.android.gms:play-services-location:21.2.0")  //위치 정보를 가져오는 라이브러리
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
