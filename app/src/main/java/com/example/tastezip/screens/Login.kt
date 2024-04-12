@@ -51,7 +51,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 
 @Composable
-fun Login(navController: NavHostController, loginViewModel: LoginViewModel, context: Context) {
+fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
