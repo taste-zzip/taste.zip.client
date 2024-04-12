@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -38,12 +39,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.tastezip.R
+import com.example.tastezip.navigation.NavRoutes
 import com.example.tastezip.ui.theme.MainActivityTheme
 import com.example.tastezip.viewmodel.UserInfoViewModel
 
 @Composable
-fun UserInfo(userInfoViewModel: UserInfoViewModel, context: Context) {
+fun UserInfo(navController: NavHostController, userInfoViewModel: UserInfoViewModel) {
+    val context = LocalContext.current
+
     var nickname by remember{ mutableStateOf("") }
     var oneLineInfo by remember { mutableStateOf("") }
 
@@ -77,6 +82,12 @@ fun UserInfo(userInfoViewModel: UserInfoViewModel, context: Context) {
             userInfoViewModel.saveUserInfo(nickname, oneLineInfo)
 
             Toast.makeText(context, "저장되었습니다.\n 닉네임: $nickname, 한 줄 소개: $oneLineInfo", Toast.LENGTH_SHORT).show()
+
+            navController.navigate(NavRoutes.NaverMapScreen.route) {
+                popUpTo(NavRoutes.UserInfo.route) {
+                    inclusive = true
+                }
+            }
         } else if (firstChecked && secondChecked && nickname.isEmpty() || oneLineInfo.isEmpty()) {
             Toast.makeText(context, "필수 항목을 채워주세요.", Toast.LENGTH_SHORT).show()
         } else if (!firstChecked || !secondChecked) {
