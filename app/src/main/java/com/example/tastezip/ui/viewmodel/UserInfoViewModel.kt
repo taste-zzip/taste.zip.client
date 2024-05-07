@@ -1,4 +1,4 @@
-package com.example.tastezip.viewmodel
+package com.example.tastezip.ui.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
