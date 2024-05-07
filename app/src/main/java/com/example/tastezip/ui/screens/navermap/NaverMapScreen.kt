@@ -1,9 +1,9 @@
-package com.example.tastezip.screens.navermap
+package com.example.tastezip.ui.screens.navermap
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,20 +28,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import com.example.tastezip.R
-import com.example.tastezip.viewmodel.NaverMapViewModel
+import com.example.tastezip.ui.viewmodel.NaverMapViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.CameraPositionState
-import com.naver.maps.map.compose.DisposableMapEffect
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
 import com.naver.maps.map.compose.MapProperties
@@ -51,7 +50,6 @@ import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
-import ted.gun0912.clustering.naver.TedNaverClustering
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
@@ -59,39 +57,26 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: () -> Unit) {
     val context = LocalContext.current
     val searchData by viewModel.searchData.collectAsState()
     val searchResult by viewModel.searchResult.collectAsState()
+    val latitude by viewModel.latitude.collectAsState()
+    val longitude by viewModel.longitude.collectAsState()
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    var latitude = 37.50358609454666
-    var longitude = 126.95705499070183
     val keyboardController = LocalSoftwareKeyboardController.current
-
-
     val cameraPositionState = rememberCameraPositionState{ CameraPosition(LatLng(latitude, longitude), 10.0) }
+
+    initUserPosition(context, fusedLocationClient, viewModel)
+
     LaunchedEffect(latitude, longitude) {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return@LaunchedEffect
-        } else {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        latitude = location.latitude
-                        longitude = location.longitude
-                    }
-                }
-                .addOnFailureListener { e ->
-                    // 위치 정보 가져오기 실패 처리
-                }
-            cameraPositionState.move(CameraUpdate.toCameraPosition(CameraPosition(LatLng(latitude, longitude), 12.0)))
+        updateCameraPosition(cameraPositionState, LatLng(latitude, longitude), 12.0)
+    }
+
+    LaunchedEffect(searchResult) {
+        val firstLatLng: LatLng? = searchResult.getOrNull()?.firstOrNull()
+        if (firstLatLng != null) {
+            updateCameraPosition(cameraPositionState, firstLatLng, 15.0)
         }
     }
 
-    var mapProperties by remember {
+    val mapProperties by remember {
         mutableStateOf(
             MapProperties(
                 maxZoom = 50.0,
@@ -163,14 +148,40 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: () -> Unit) {
                 ),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
-
-            LaunchedEffect(key1 = searchResult) {
-                val firstLatLng: LatLng? = searchResult.getOrNull()?.firstOrNull()
-                if (firstLatLng != null) {
-                    cameraPositionState.position = CameraPosition(firstLatLng, 15.0)
-                    cameraPositionState.move(CameraUpdate.zoomIn())
-                }
-            }
         }
     }
+}
+
+fun initUserPosition(
+    context: Context,
+    fusedLocationClient: FusedLocationProviderClient,
+    viewModel: NaverMapViewModel
+) {
+    if (
+        ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        return
+    } else {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    viewModel.updateUserLocation(location)
+                }
+            }
+            .addOnFailureListener { e ->
+                // 위치 정보 가져오기 실패 처리
+            }
+    }
+}
+
+@OptIn(ExperimentalNaverMapApi::class)
+fun updateCameraPosition(cameraPositionState: CameraPositionState, latLng: LatLng, zoom: Double) {
+    cameraPositionState.position = CameraPosition(latLng, zoom)
+    cameraPositionState.move(CameraUpdate.zoomIn())
 }
