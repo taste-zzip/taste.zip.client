@@ -1,4 +1,4 @@
-package com.example.tastezip.screens
+package com.example.tastezip.ui.screens
 
 import android.content.Context
 import android.widget.Toast
@@ -43,7 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.tastezip.R
 import com.example.tastezip.navigation.NavRoutes
 import com.example.tastezip.ui.theme.MainActivityTheme
-import com.example.tastezip.viewmodel.UserInfoViewModel
+import com.example.tastezip.ui.viewmodel.UserInfoViewModel
 
 @Composable
 fun UserInfo(navController: NavHostController, userInfoViewModel: UserInfoViewModel) {

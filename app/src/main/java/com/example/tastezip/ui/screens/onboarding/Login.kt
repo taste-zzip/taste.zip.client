@@ -1,4 +1,4 @@
-package com.example.tastezip.screens
+package com.example.tastezip.ui.screens
 
 import android.app.Activity
 import android.content.Context
@@ -44,7 +44,7 @@ import androidx.navigation.NavHostController
 import com.example.tastezip.R
 import com.example.tastezip.navigation.NavRoutes
 import com.example.tastezip.ui.theme.MainActivityTheme
-import com.example.tastezip.viewmodel.LoginViewModel
+import com.example.tastezip.ui.viewmodel.LoginViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions

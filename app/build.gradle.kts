@@ -63,15 +63,15 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation("androidx.compose.ui:ui:1.6.5")
+    implementation("androidx.compose.ui:ui:1.6.6")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
     implementation("com.google.firebase:firebase-auth:22.3.1")
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.android.gms:play-services-auth:21.1.0")
 
-    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.android.gms:play-services-auth:21.1.0")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
@@ -83,12 +83,16 @@ dependencies {
 
     implementation("io.github.fornewid:naver-map-compose:1.5.5")
     implementation("io.github.fornewid:naver-map-location:21.0.1")
-    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
 
     implementation("com.naver.maps:map-sdk:3.16.2")
 
     implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")   //위치 권한 사용을 위한 라이브러리
     implementation("com.google.android.gms:play-services-location:21.2.0")  //위치 정보를 가져오는 라이브러리
+
+    implementation("androidx.compose.material3:material3")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.compose.material:material:1.6.6")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
