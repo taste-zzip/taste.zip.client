@@ -1,14 +1,7 @@
-package com.example.tastezip.screens
+package com.example.tastezip.ui.screens.onboarding
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.widget.Space
 import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,26 +9,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,20 +33,20 @@ import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavHostController
 import com.example.tastezip.R
 import com.example.tastezip.navigation.NavRoutes
+import com.example.tastezip.ui.component.CustomText
 import com.example.tastezip.ui.theme.MainActivityTheme
-import com.example.tastezip.viewmodel.LoginViewModel
+import com.example.tastezip.ui.viewmodel.LoginViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.tasks.Task
 
 @Composable
 fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {
-        loginViewModel.login(activityResult = it) {
+    val loginSuccess = loginViewModel.loginSuccess.collectAsState()
+    val errorMessage = loginViewModel.errorMessage.collectAsState()
+
+    LaunchedEffect(loginSuccess.value) {
+        if (loginSuccess.value) {
             Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
 
             navController.navigate(NavRoutes.UserInfo.route) {
@@ -64,7 +54,16 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
                     inclusive = true
                 }
             }
+
+        } else if (errorMessage.value?.isNotEmpty() == true) {
+            Toast.makeText(context, errorMessage.value, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        loginViewModel.handleGoogleLoginResult(it.data)
     }
 
     Box(
@@ -121,16 +120,7 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
 
                 IconButton(
                     onClick = {
-                        val token = getString(context, R.string.client_id)
-
-                        val googleSignInOptions = GoogleSignInOptions
-                            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken(token)
-                            .requestEmail()
-                            .build()
-
-                        val googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions)
-                        launcher.launch(googleSignInClient.signInIntent)
+                        loginViewModel.signInWithGoogle(context, launcher)
                     },
                     modifier = Modifier
                         .size(width = 250.dp, height = 48.dp)
@@ -143,20 +133,6 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
             }
         }
     }
-}
-
-@Composable
-fun CustomText(text: String, fontSize: TextUnit, font: Font, modifier: Modifier = Modifier, color: Color) {
-    Text(
-        text = text,
-        style = TextStyle(
-            fontSize = fontSize,
-            fontFamily = FontFamily(font)
-        ),
-        color = color,
-        modifier = modifier,
-        textAlign = TextAlign.Center
-    )
 }
 
 @Preview

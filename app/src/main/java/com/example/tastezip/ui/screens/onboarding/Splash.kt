@@ -1,4 +1,4 @@
-package com.example.tastezip.screens
+package com.example.tastezip.ui.screens.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,7 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tastezip.R
 import com.example.tastezip.navigation.NavRoutes
 import com.example.tastezip.ui.theme.MainActivityTheme
-import com.example.tastezip.viewmodel.LoginViewModel
+import com.example.tastezip.ui.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 
 @Composable
