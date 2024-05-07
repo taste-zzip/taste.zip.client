@@ -71,7 +71,6 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.android.gms:play-services-auth:21.1.0")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
@@ -83,16 +82,20 @@ dependencies {
 
     implementation("io.github.fornewid:naver-map-compose:1.5.5")
     implementation("io.github.fornewid:naver-map-location:21.0.1")
-    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     implementation("com.naver.maps:map-sdk:3.16.2")
 
     implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")   //위치 권한 사용을 위한 라이브러리
-    implementation("com.google.android.gms:play-services-location:21.2.0")  //위치 정보를 가져오는 라이브러리
+    implementation("io.github.ParkSangGwon:tedclustering-naver:1.0.2") //마커 클러스터링 라이브러리
 
     implementation("androidx.compose.material3:material3")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.compose.material:material:1.6.6")
+
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

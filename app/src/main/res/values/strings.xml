@@ -3,4 +3,10 @@
     <string name="client_id">1092102056221-92buirgtq5g5v53nbn3075r0167vgnan.apps.googleusercontent.com</string>
 
     <string name="naver_map_client_id">4ucf1ck4g1</string>
+
+    <string name="food_wc">음식 월드컵</string>
+    <string name="recommendation">추천</string>
+    <string name="home">홈</string>
+    <string name="shorts">Shorts</string>
+    <string name="my_page">마이페이지</string>
 </resources>
