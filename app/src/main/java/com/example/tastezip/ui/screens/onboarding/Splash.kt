@@ -1,4 +1,4 @@
-package com.example.tastezip.ui.screens
+package com.example.tastezip.ui.screens.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
