@@ -143,6 +143,7 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: () -> Unit) {
                 keyboardActions = KeyboardActions(
                     onDone = {
                         viewModel.getLatLang(searchData)
+                        updateCameraPosition(cameraPositionState, LatLng(latitude, longitude), 12.0)
                         keyboardController?.hide()
                     }
                 ),

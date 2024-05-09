@@ -41,7 +41,9 @@ class NaverMapViewModel @Inject constructor(): ViewModel() {
             if (name == "바다회사랑") {
                 val seoulCityHall = LatLng(37.56040942740714, 126.92106201288655)
                 val dummyLatLngList = listOf(seoulCityHall)
-                _searchResult.value = Result.success(dummyLatLngList)
+                _searchResult.update {
+                    Result.success(dummyLatLngList)
+                }
             } else {
                 _searchResult.value = Result.success(emptyList())
             }

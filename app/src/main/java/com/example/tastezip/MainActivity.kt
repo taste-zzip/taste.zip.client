@@ -47,6 +47,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.tastezip.navigation.NavBarItems
 import com.example.tastezip.ui.screens.navermap.BottomSheetLayout
+import com.example.tastezip.ui.viewmodel.BottomSheetViewModel
 import com.example.tastezip.ui.viewmodel.NaverMapViewModel
 
 @AndroidEntryPoint
@@ -147,12 +148,13 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
 
         composable(NavRoutes.NaverMapScreen.route) {
             val naverMapViewModel = hiltViewModel<NaverMapViewModel>()
+            val bottomSheetViewModel = hiltViewModel<BottomSheetViewModel>()
 
             LaunchedEffect(Unit) {
                 bottomBarState.value = true
             }
 
-            BottomSheetLayout(viewModel = naverMapViewModel)
+            BottomSheetLayout(naverMapViewModel, bottomSheetViewModel)
         }
     }
 }
