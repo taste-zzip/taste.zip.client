@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.tastezip.R
 import com.example.tastezip.navigation.NavRoutes
@@ -40,7 +41,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @Composable
-fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
+fun Login(navController: NavHostController, loginViewModel: LoginViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val loginSuccess = loginViewModel.loginSuccess.collectAsState()
     val errorMessage = loginViewModel.errorMessage.collectAsState()

@@ -117,44 +117,23 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
         startDestination = NavRoutes.Splash.route
     ) {
         composable(NavRoutes.Splash.route) {
-            val loginViewModel = hiltViewModel<LoginViewModel>()
-
-            LaunchedEffect(Unit) {
-                bottomBarState.value = false
-            }
-
-            Splash(navController, loginViewModel)
+            LaunchedEffect(Unit) { bottomBarState.value = false }
+            Splash(navController)
         }
 
         composable(NavRoutes.Login.route) {
-            val loginViewModel = hiltViewModel<LoginViewModel>()
-
-            LaunchedEffect(Unit) {
-                bottomBarState.value = false
-            }
-
-            Login(navController, loginViewModel)
+            LaunchedEffect(Unit) { bottomBarState.value = false }
+            Login(navController)
         }
 
         composable(NavRoutes.UserInfo.route) {
-            val userInfoViewModel = hiltViewModel<UserInfoViewModel>()
-
-            LaunchedEffect(Unit) {
-                bottomBarState.value = false
-            }
-
-            UserInfo(navController, userInfoViewModel)
+            LaunchedEffect(Unit) { bottomBarState.value = false }
+            UserInfo(navController)
         }
 
         composable(NavRoutes.NaverMapScreen.route) {
-            val naverMapViewModel = hiltViewModel<NaverMapViewModel>()
-            val bottomSheetViewModel = hiltViewModel<BottomSheetViewModel>()
-
-            LaunchedEffect(Unit) {
-                bottomBarState.value = true
-            }
-
-            BottomSheetLayout(naverMapViewModel, bottomSheetViewModel)
+            LaunchedEffect(Unit) { bottomBarState.value = true }
+            BottomSheetLayout()
         }
     }
 }

@@ -39,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.tastezip.R
 import com.example.tastezip.model.vo.VideoItemVo
@@ -50,7 +51,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheetLayout(naverMapviewModel: NaverMapViewModel, bottomSheetViewModel: BottomSheetViewModel) {
+fun BottomSheetLayout(
+    naverMapviewModel: NaverMapViewModel = hiltViewModel(),
+    bottomSheetViewModel: BottomSheetViewModel = hiltViewModel()
+) {
     val shopTitle = bottomSheetViewModel.shopTitleState.collectAsState().value
     val distance = bottomSheetViewModel.distanceState.collectAsState().value
     val type = bottomSheetViewModel.typeState.collectAsState().value
