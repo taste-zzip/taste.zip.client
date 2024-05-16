@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
@@ -47,6 +48,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.tastezip.navigation.NavBarItems
 import com.example.tastezip.ui.screens.navermap.BottomSheetLayout
+import com.example.tastezip.ui.screens.shorts.ShortsScreen
 import com.example.tastezip.ui.viewmodel.BottomSheetViewModel
 import com.example.tastezip.ui.viewmodel.NaverMapViewModel
 
@@ -71,6 +73,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(context: Context) {
     val bottomBarState = rememberSaveable { mutableStateOf(false) }
+    val isShorts = remember { mutableStateOf(false) }
 
     MainActivityTheme {
         val navController = rememberNavController()
@@ -104,14 +107,21 @@ fun MainScreen(context: Context) {
                         bottom = paddingValue.calculateBottomPadding()
                     )
             ) {
-                NavigationHost(navController = navController, bottomBarState = bottomBarState)
+                NavigationHost(navController = navController, bottomBarState = bottomBarState, isShorts)
+            }
+        }
+
+        LaunchedEffect(isShorts.value) {
+            when (isShorts.value) {
+                true -> navController.navigate(NavRoutes.StoreShortsScreen.route)
+                false -> navController.navigate(NavRoutes.NaverMapScreen.route)
             }
         }
     }
 }
 
 @Composable
-fun NavigationHost(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
+fun NavigationHost(navController: NavHostController, bottomBarState: MutableState<Boolean>, isShorts: MutableState<Boolean>) {
     NavHost(
         navController = navController,
         startDestination = NavRoutes.Splash.route
@@ -133,7 +143,12 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
 
         composable(NavRoutes.NaverMapScreen.route) {
             LaunchedEffect(Unit) { bottomBarState.value = true }
-            BottomSheetLayout()
+            BottomSheetLayout(isShorts = isShorts, navController = navController)
+        }
+
+        composable(NavRoutes.StoreShortsScreen.route) {
+            LaunchedEffect(Unit) { bottomBarState.value = false }
+            ShortsScreen(lifecycleOwner = LocalLifecycleOwner.current)
         }
     }
 }
