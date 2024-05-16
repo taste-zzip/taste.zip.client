@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.tastezip.R
 import com.example.tastezip.navigation.NavRoutes
@@ -43,7 +44,7 @@ import com.example.tastezip.ui.theme.MainActivityTheme
 import com.example.tastezip.ui.viewmodel.UserInfoViewModel
 
 @Composable
-fun UserInfo(navController: NavHostController, userInfoViewModel: UserInfoViewModel) {
+fun UserInfo(navController: NavHostController, userInfoViewModel: UserInfoViewModel = hiltViewModel()) {
     val context = LocalContext.current
 
     var nickname by remember{ mutableStateOf("") }

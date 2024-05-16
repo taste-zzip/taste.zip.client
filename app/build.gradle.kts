@@ -97,6 +97,8 @@ dependencies {
 
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 
+    implementation("com.google.accompanist:accompanist-pager:0.35.0-alpha")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

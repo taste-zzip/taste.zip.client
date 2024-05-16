@@ -17,6 +17,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.tastezip.R
@@ -26,7 +27,7 @@ import com.example.tastezip.ui.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun Splash(navController: NavHostController, loginViewModel: LoginViewModel) {
+fun Splash(navController: NavHostController, loginViewModel: LoginViewModel = hiltViewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -41,13 +42,17 @@ fun Splash(navController: NavHostController, loginViewModel: LoginViewModel) {
             Image(
                 painter = painterResource(id = R.drawable.app_icon),
                 contentDescription = "app_icon",
-                modifier = Modifier.size(150.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .size(150.dp)
+                    .align(Alignment.CenterHorizontally)
             )
 
             Image(
                 painter = painterResource(id = R.drawable.splash_text),
                 contentDescription = "splash_text",
-                modifier = Modifier.size(200.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .size(200.dp)
+                    .align(Alignment.CenterHorizontally)
 
             )
         }

@@ -1,5 +1,6 @@
 package com.example.tastezip.ui.screens.navermap
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +29,8 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,18 +42,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.tastezip.R
 import com.example.tastezip.model.vo.VideoItemVo
 import com.example.tastezip.ui.component.CustomIconButton
 import com.example.tastezip.ui.component.CustomText
+import com.example.tastezip.ui.screens.shorts.ShortsScreen
+import com.example.tastezip.ui.theme.MainActivityTheme
 import com.example.tastezip.ui.viewmodel.BottomSheetViewModel
 import com.example.tastezip.ui.viewmodel.NaverMapViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheetLayout(naverMapviewModel: NaverMapViewModel, bottomSheetViewModel: BottomSheetViewModel) {
+fun BottomSheetLayout(
+    naverMapviewModel: NaverMapViewModel = hiltViewModel(),
+    bottomSheetViewModel: BottomSheetViewModel = hiltViewModel(),
+    isShorts: MutableState<Boolean>,
+    navController: NavController
+) {
     val shopTitle = bottomSheetViewModel.shopTitleState.collectAsState().value
     val distance = bottomSheetViewModel.distanceState.collectAsState().value
     val type = bottomSheetViewModel.typeState.collectAsState().value
@@ -62,7 +74,6 @@ fun BottomSheetLayout(naverMapviewModel: NaverMapViewModel, bottomSheetViewModel
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = false
     )
-
     val showBottomSheet = {
         if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
             coroutineScope.launch {
@@ -128,7 +139,7 @@ fun BottomSheetLayout(naverMapviewModel: NaverMapViewModel, bottomSheetViewModel
                             )
                         }
                     } else {
-                        CustomGridLayout(items = videoList, cellCount = 2, gridState = gridState)
+                        CustomGridLayout(items = videoList, cellCount = 2, gridState = gridState, isShorts)
                     }
                 }
             }
@@ -146,7 +157,8 @@ fun ShortsItem(
     title: String,
     id: Long,
     starCount: Double,
-    trophyCount: Int
+    trophyCount: Int,
+    onClick: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -156,7 +168,8 @@ fun ShortsItem(
         modifier = Modifier
             .width(cardWidth)
             .padding(horizontal = 5.dp)
-            .padding(bottom = 5.dp),
+            .padding(bottom = 5.dp)
+            .clickable { onClick() },
     ) {
         Card(
             modifier = Modifier
@@ -311,7 +324,7 @@ fun FourEqualButtonsWithDividers() {
 }
 
 @Composable
-fun CustomGridLayout(items: List<VideoItemVo>, cellCount: Int, gridState: LazyGridState) {
+fun CustomGridLayout(items: List<VideoItemVo>, cellCount: Int, gridState: LazyGridState, isShorts: MutableState<Boolean>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(cellCount),
         state = gridState,
@@ -323,7 +336,10 @@ fun CustomGridLayout(items: List<VideoItemVo>, cellCount: Int, gridState: LazyGr
                 title = item.title,
                 id = item.id,
                 starCount = item.starCount,
-                trophyCount = item.trophyCount
+                trophyCount = item.trophyCount,
+                onClick = {
+                    isShorts.value = true
+                }
             )
         }
     }
