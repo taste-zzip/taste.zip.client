@@ -111,12 +111,12 @@ fun MainScreen(context: Context) {
             }
         }
 
-        LaunchedEffect(isShorts.value) {
-            when (isShorts.value) {
-                true -> navController.navigate(NavRoutes.StoreShortsScreen.route)
-                false -> navController.navigate(NavRoutes.NaverMapScreen.route)
-            }
-        }
+//        LaunchedEffect(isShorts.value) {
+//            when (isShorts.value) {
+//                true -> navController.navigate(NavRoutes.StoreShortsScreen.route)
+//                false -> navController.navigate(NavRoutes.NaverMapScreen.route)
+//            }
+//        }
     }
 }
 

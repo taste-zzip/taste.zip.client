@@ -30,7 +30,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
+import androidx.credentials.CredentialManager
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tastezip.R
 import com.example.tastezip.navigation.NavRoutes
@@ -43,6 +45,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 @Composable
 fun Login(navController: NavHostController, loginViewModel: LoginViewModel = hiltViewModel()) {
     val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        loginViewModel.handleGoogleLoginResult(it.data)
+    }
     val loginSuccess = loginViewModel.loginSuccess.collectAsState()
     val errorMessage = loginViewModel.errorMessage.collectAsState()
 
@@ -59,12 +66,6 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel = hil
         } else if (errorMessage.value?.isNotEmpty() == true) {
             Toast.makeText(context, errorMessage.value, Toast.LENGTH_SHORT).show()
         }
-    }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {
-        loginViewModel.handleGoogleLoginResult(it.data)
     }
 
     Box(

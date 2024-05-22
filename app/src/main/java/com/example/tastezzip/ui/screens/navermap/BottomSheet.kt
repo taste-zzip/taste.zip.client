@@ -47,6 +47,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.tastezip.R
 import com.example.tastezip.model.vo.VideoItemVo
+import com.example.tastezip.navigation.NavRoutes
 import com.example.tastezip.ui.component.CustomIconButton
 import com.example.tastezip.ui.component.CustomText
 import com.example.tastezip.ui.screens.shorts.ShortsScreen
@@ -139,7 +140,7 @@ fun BottomSheetLayout(
                             )
                         }
                     } else {
-                        CustomGridLayout(items = videoList, cellCount = 2, gridState = gridState, isShorts)
+                        CustomGridLayout(items = videoList, cellCount = 2, gridState = gridState, isShorts, navController)
                     }
                 }
             }
@@ -324,7 +325,7 @@ fun FourEqualButtonsWithDividers() {
 }
 
 @Composable
-fun CustomGridLayout(items: List<VideoItemVo>, cellCount: Int, gridState: LazyGridState, isShorts: MutableState<Boolean>) {
+fun CustomGridLayout(items: List<VideoItemVo>, cellCount: Int, gridState: LazyGridState, isShorts: MutableState<Boolean>, navController: NavController) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(cellCount),
         state = gridState,
@@ -338,7 +339,8 @@ fun CustomGridLayout(items: List<VideoItemVo>, cellCount: Int, gridState: LazyGr
                 starCount = item.starCount,
                 trophyCount = item.trophyCount,
                 onClick = {
-                    isShorts.value = true
+//                    isShorts.value = true
+                    navController.navigate(NavRoutes.StoreShortsScreen.route)
                 }
             )
         }
