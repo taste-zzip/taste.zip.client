@@ -1,4 +1,4 @@
-package com.example.tastezip.model.vo
+package com.example.tastezzip.model.vo
 
 data class VideoItemVo(
     val id: Long = -1,

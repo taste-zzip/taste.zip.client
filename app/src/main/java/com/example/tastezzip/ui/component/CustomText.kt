@@ -1,4 +1,4 @@
-package com.example.tastezip.ui.component
+package com.example.tastezzip.ui.component
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,7 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 
 @Composable
-fun CustomText(text: String, fontSize: TextUnit, font: Font, modifier: Modifier = Modifier, color: Color) {
+fun CustomText(text: String, fontSize: TextUnit, font: Font, modifier: Modifier = Modifier, color: Color, textAlign: TextAlign = TextAlign.Center) {
     Text(
         text = text,
         style = TextStyle(
@@ -20,6 +20,6 @@ fun CustomText(text: String, fontSize: TextUnit, font: Font, modifier: Modifier 
         ),
         color = color,
         modifier = modifier,
-        textAlign = TextAlign.Center
+        textAlign = textAlign
     )
 }
