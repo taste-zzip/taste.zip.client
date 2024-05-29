@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.tastezip"
+    namespace = "com.example.tastezzip"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.tastezip"
+        applicationId = "com.example.tastezzip"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -63,22 +63,18 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation("androidx.compose.ui:ui:1.6.6")
+    implementation("androidx.compose.ui:ui:1.6.7")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    implementation("com.google.firebase:firebase-auth:22.3.1")
-    implementation("com.google.android.gms:play-services-auth:21.1.0")
-
-    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
-    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.android.gms:play-services-auth:21.1.1")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    implementation("com.google.dagger:hilt-android:2.49")
+    implementation("com.google.dagger:hilt-android:2.51.1")
     implementation("androidx.hilt:hilt-work:1.2.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 
-    kapt("com.google.dagger:hilt-compiler:2.44")
+    kapt("com.google.dagger:hilt-compiler:2.51.1")
 
     implementation("io.github.fornewid:naver-map-compose:1.5.5")
     implementation("io.github.fornewid:naver-map-location:21.0.1")
@@ -90,14 +86,29 @@ dependencies {
     implementation("io.github.ParkSangGwon:tedclustering-naver:1.0.2") //마커 클러스터링 라이브러리
 
     implementation("androidx.compose.material3:material3")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.compose.material:material:1.6.6")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.compose.material:material:1.6.7")
 
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 
     implementation("com.google.accompanist:accompanist-pager:0.35.0-alpha")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.9.1")
+
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha04")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
+    implementation("androidx.compose.animation:animation:1.6.7")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
