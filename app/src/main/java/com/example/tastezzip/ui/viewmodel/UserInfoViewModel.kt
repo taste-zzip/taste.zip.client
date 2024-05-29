@@ -1,6 +1,5 @@
-package com.example.tastezip.ui.viewmodel
+package com.example.tastezzip.ui.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

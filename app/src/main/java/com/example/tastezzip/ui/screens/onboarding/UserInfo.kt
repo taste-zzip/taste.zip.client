@@ -1,4 +1,4 @@
-package com.example.tastezip.ui.screens.onboarding
+package com.example.tastezzip.ui.screens.onboarding
 
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
@@ -37,11 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.tastezip.R
-import com.example.tastezip.navigation.NavRoutes
-import com.example.tastezip.ui.component.CustomText
-import com.example.tastezip.ui.theme.MainActivityTheme
-import com.example.tastezip.ui.viewmodel.UserInfoViewModel
+import com.example.tastezzip.R
+import com.example.tastezzip.navigation.NavRoutes
+import com.example.tastezzip.ui.component.CustomText
+import com.example.tastezzip.ui.theme.MainActivityTheme
+import com.example.tastezzip.ui.viewmodel.UserInfoViewModel
 
 @Composable
 fun UserInfo(navController: NavHostController, userInfoViewModel: UserInfoViewModel = hiltViewModel()) {
