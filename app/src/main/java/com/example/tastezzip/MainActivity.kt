@@ -1,4 +1,4 @@
-package com.example.tastezip
+package com.example.tastezzip
 
 import android.content.Context
 import android.os.Bundle
@@ -13,18 +13,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.tastezip.navigation.NavRoutes
-import com.example.tastezip.ui.screens.onboarding.Login
-import com.example.tastezip.ui.screens.onboarding.Splash
-import com.example.tastezip.ui.screens.onboarding.UserInfo
-import com.example.tastezip.ui.theme.MainActivityTheme
-import com.example.tastezip.ui.viewmodel.LoginViewModel
-import com.example.tastezip.ui.viewmodel.UserInfoViewModel
+import com.example.tastezzip.navigation.NavRoutes
+import com.example.tastezzip.ui.screens.onboarding.Login
+import com.example.tastezzip.ui.screens.onboarding.Splash
+import com.example.tastezzip.ui.screens.onboarding.UserInfo
+import com.example.tastezzip.ui.theme.MainActivityTheme
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Icon
@@ -45,12 +42,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.tastezip.navigation.NavBarItems
-import com.example.tastezip.ui.screens.navermap.BottomSheetLayout
-import com.example.tastezip.ui.screens.shorts.ShortsScreen
-import com.example.tastezip.ui.viewmodel.BottomSheetViewModel
-import com.example.tastezip.ui.viewmodel.NaverMapViewModel
+import androidx.navigation.navArgument
+import com.example.tastezzip.navigation.NavBarItems
+import com.example.tastezzip.ui.screens.navermap.BottomSheetLayout
+import com.example.tastezzip.ui.screens.shorts.ShortsScreen
+import com.example.tastezzip.ui.screens.shorts.ShortsTapScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -110,13 +108,6 @@ fun MainScreen(context: Context) {
                 NavigationHost(navController = navController, bottomBarState = bottomBarState, isShorts)
             }
         }
-
-//        LaunchedEffect(isShorts.value) {
-//            when (isShorts.value) {
-//                true -> navController.navigate(NavRoutes.StoreShortsScreen.route)
-//                false -> navController.navigate(NavRoutes.NaverMapScreen.route)
-//            }
-//        }
     }
 }
 
@@ -149,6 +140,11 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
         composable(NavRoutes.StoreShortsScreen.route) {
             LaunchedEffect(Unit) { bottomBarState.value = false }
             ShortsScreen(lifecycleOwner = LocalLifecycleOwner.current)
+        }
+
+        composable(NavRoutes.ShortsScreen.route) {
+            LaunchedEffect(Unit) { bottomBarState.value = true }
+            ShortsTapScreen(lifecycleOwner = LocalLifecycleOwner.current)
         }
     }
 }
