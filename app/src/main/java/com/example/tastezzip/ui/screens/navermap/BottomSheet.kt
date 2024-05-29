@@ -1,5 +1,8 @@
-package com.example.tastezip.ui.screens.navermap
+package com.example.tastezzip.ui.screens.navermap
 
+import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,39 +24,47 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Text
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.tastezip.R
-import com.example.tastezip.model.vo.VideoItemVo
-import com.example.tastezip.navigation.NavRoutes
-import com.example.tastezip.ui.component.CustomIconButton
-import com.example.tastezip.ui.component.CustomText
-import com.example.tastezip.ui.screens.shorts.ShortsScreen
-import com.example.tastezip.ui.theme.MainActivityTheme
-import com.example.tastezip.ui.viewmodel.BottomSheetViewModel
-import com.example.tastezip.ui.viewmodel.NaverMapViewModel
+import com.example.tastezzip.R
+import com.example.tastezzip.model.response.cafeteria.detail.Video
+import com.example.tastezzip.model.vo.VideoItemVo
+import com.example.tastezzip.navigation.NavRoutes
+import com.example.tastezzip.repository.VideoRepositoryImpl
+import com.example.tastezzip.ui.component.CustomIconButton
+import com.example.tastezzip.ui.component.CustomText
+import com.example.tastezzip.ui.theme.MainActivityTheme
+import com.example.tastezzip.ui.viewmodel.BottomSheetViewModel
+import com.example.tastezzip.ui.viewmodel.NaverMapViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -64,11 +75,9 @@ fun BottomSheetLayout(
     isShorts: MutableState<Boolean>,
     navController: NavController
 ) {
-    val shopTitle = bottomSheetViewModel.shopTitleState.collectAsState().value
-    val distance = bottomSheetViewModel.distanceState.collectAsState().value
-    val type = bottomSheetViewModel.typeState.collectAsState().value
-    val videoCount = bottomSheetViewModel.videoCountState.collectAsState().value
-    val videoList = bottomSheetViewModel.videoListState.collectAsState().value
+    val context = LocalContext.current
+    val isLoading by bottomSheetViewModel.isLoading.collectAsState(initial = false)
+    val cafeteriaDetail by bottomSheetViewModel.cafeteriaDetail.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
     val sheetState = rememberModalBottomSheetState(
@@ -80,6 +89,17 @@ fun BottomSheetLayout(
             coroutineScope.launch {
                 sheetState.show()
             }
+        }
+    }
+
+    LaunchedEffect(key1 = cafeteriaDetail) {
+        if (cafeteriaDetail.id == -1L) return@LaunchedEffect
+        showBottomSheet()
+    }
+
+    LaunchedEffect(key1 = true) {
+        bottomSheetViewModel.bookmarkSuccessEvent.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -96,7 +116,7 @@ fun BottomSheetLayout(
                         .padding(20.dp)
                 ) {
                     CustomText(
-                        text = shopTitle,
+                        text = cafeteriaDetail.name,
                         fontSize = 20.sp,
                         font = Font(R.font.pretendard_bold),
                         color = Color.Black,
@@ -104,10 +124,7 @@ fun BottomSheetLayout(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Row {
-                        CustomText(text = distance.toString() + "m", fontSize = 12.sp, font = Font(R.font.pretendard_medium), color = Color.Black)
-                        CustomText(text = type, fontSize = 12.sp, font = Font(R.font.pretendard_medium), color = Color.Gray)
-                    }
+                    CustomText(text = cafeteriaDetail.type, fontSize = 12.sp, font = Font(R.font.pretendard_medium), color = Color.Gray)
 
                     Spacer(modifier = Modifier.height(10.dp))
 
@@ -115,18 +132,18 @@ fun BottomSheetLayout(
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = "ic_info", tint = Color.Unspecified)
-                        CustomText(text = "리뷰 영상 " + videoCount.toString() + "개", fontSize = 12.sp, font = Font(R.font.pretendard_medium), color = Color.Black)
+                        CustomText(text = "리뷰 영상 " + cafeteriaDetail.videoCnt + "개", fontSize = 12.sp, font = Font(R.font.pretendard_medium), color = Color.Black)
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    FourEqualButtonsWithDividers()
+                    FourEqualButtonsWithDividers(bottomSheetViewModel, cafeteriaDetail.id)
 
                     Spacer(modifier = Modifier.height(10.dp))
 
                     CustomText(text = "리뷰", fontSize = 20.sp, font = Font(R.font.pretendard_bold), color = Color.Black)
 
-                    if (videoList.isEmpty()) {
+                    if (cafeteriaDetail.videos.isEmpty()) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxWidth()
@@ -140,7 +157,7 @@ fun BottomSheetLayout(
                             )
                         }
                     } else {
-                        CustomGridLayout(items = videoList, cellCount = 2, gridState = gridState, isShorts, navController)
+                        CustomGridLayout(items = cafeteriaDetail.videos, cellCount = 2, gridState = gridState, navController, viewModel = bottomSheetViewModel, cafeteriaId = cafeteriaDetail.id)
                     }
                 }
             }
@@ -148,7 +165,12 @@ fun BottomSheetLayout(
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetGesturesEnabled = true
     ) {
-        NaverMapScreen(viewModel = naverMapviewModel, onMarkerClick = showBottomSheet)
+        NaverMapScreen(
+            viewModel = naverMapviewModel,
+            onMarkerClick = {
+                bottomSheetViewModel.getCafeteriaDetail(it)
+            }
+        )
     }
 }
 
@@ -157,9 +179,10 @@ fun ShortsItem(
     imageUrl: String,
     title: String,
     id: Long,
-    starCount: Double,
+    starCount: Int,
     trophyCount: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    viewCount: Int
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -182,7 +205,7 @@ fun ShortsItem(
             AsyncImage(
                 model = imageUrl,
                 contentDescription = null,
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.Crop
             )
         }
 
@@ -191,37 +214,49 @@ fun ShortsItem(
         CustomText(
             text = title,
             fontSize = 10.sp,
-            font = Font(R.font.pretendard_medium),
-            color = Color.Black
+            font = Font(R.font.pretendard_semi_bold),
+            color = Color.Black,
+            textAlign = TextAlign.Start
         )
 
+        Spacer(modifier = Modifier.height(3.dp))
+
         CustomText(
-            text = "조회수",
+            text = "조회수 " + viewCount + "회",
             fontSize = 10.sp,
             font = Font(R.font.pretendard_medium),
             color = Color.LightGray
         )
 
         Row {
+            Image(painter = painterResource(id = R.drawable.ic_star), contentDescription = "star")
+
             CustomText(
                 text = starCount.toString(),
                 fontSize = 10.sp,
-                font = Font(R.font.pretendard_medium),
-                color = Color.LightGray
+                font = Font(R.font.pretendard_regular),
+                color = Color.Black
             )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Image(painter = painterResource(id = R.drawable.ic_trophy), contentDescription = "star")
 
             CustomText(
                 text = trophyCount.toString(),
                 fontSize = 10.sp,
-                font = Font(R.font.pretendard_medium),
-                color = Color.LightGray
+                font = Font(R.font.pretendard_regular),
+                color = Color.Black
             )
         }
     }
 }
 
 @Composable
-fun FourEqualButtonsWithDividers() {
+fun FourEqualButtonsWithDividers(
+    viewModel: BottomSheetViewModel,
+    id: Long
+) {
     Box(modifier = Modifier
         .fillMaxWidth()
         .height(55.dp)
@@ -279,7 +314,9 @@ fun FourEqualButtonsWithDividers() {
                 )
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                          viewModel.bookmarkCafeteria(id)
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -325,7 +362,7 @@ fun FourEqualButtonsWithDividers() {
 }
 
 @Composable
-fun CustomGridLayout(items: List<VideoItemVo>, cellCount: Int, gridState: LazyGridState, isShorts: MutableState<Boolean>, navController: NavController) {
+fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridState, navController: NavController, viewModel: BottomSheetViewModel, cafeteriaId: Long) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(cellCount),
         state = gridState,
@@ -336,13 +373,23 @@ fun CustomGridLayout(items: List<VideoItemVo>, cellCount: Int, gridState: LazyGr
                 imageUrl = item.thumbnailUrl,
                 title = item.title,
                 id = item.id,
-                starCount = item.starCount,
+                starCount = item.starAverage,
                 trophyCount = item.trophyCount,
                 onClick = {
-//                    isShorts.value = true
+                    viewModel.setVideoList(items)
+                    viewModel.setCafeteriaId(cafeteriaId)
                     navController.navigate(NavRoutes.StoreShortsScreen.route)
-                }
+                },
+                viewCount = item.viewCount
             )
         }
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun Preview() {
+    MainActivityTheme {
+        ShortsItem(imageUrl = "", title = "임시 제목", id = 1, starCount = 4, trophyCount = 5, onClick = {}, viewCount = 100)
     }
 }
