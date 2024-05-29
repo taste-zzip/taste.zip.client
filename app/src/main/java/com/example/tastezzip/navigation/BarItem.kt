@@ -1,8 +1,4 @@
-package com.example.tastezip.navigation
-
-import android.graphics.drawable.Icon
-import android.media.Image
-import androidx.compose.ui.graphics.vector.ImageVector
+package com.example.tastezzip.navigation
 
 data class BarItem(
     val title: String,
