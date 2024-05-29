@@ -1,52 +1,87 @@
-package com.example.tastezip.ui.viewmodel
+package com.example.tastezzip.ui.viewmodel
 
 import android.location.Location
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tastezip.ui.screens.navermap.NaverItem
+import com.example.tastezzip.data.repository.CafeteriaRepository
+import com.example.tastezzip.data.repository.YoutubeRepository
+import com.example.tastezzip.model.request.BookmarkCafeteriaRequestVo
+import com.example.tastezzip.model.request.SearchCafeteriaRequest
+import com.example.tastezzip.model.request.SizeRequestVo
+import com.example.tastezzip.model.response.cafeteria.Content
+import com.example.tastezzip.model.response.cafeteria.SearchCafeteriaResponse
+import com.example.tastezzip.model.response.cafeteria.bookmark.Cafeteria
+import com.example.tastezzip.model.response.youtube.LikedCafeteria
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Thread.State
 import javax.inject.Inject
 
 @HiltViewModel
-class NaverMapViewModel @Inject constructor(): ViewModel() {
-    private val _searchData = MutableStateFlow("")
-    val searchData: StateFlow<String> = _searchData.asStateFlow()
-
+class NaverMapViewModel @Inject constructor(
+    private val cafeteriaRepository: CafeteriaRepository,
+    private val youtubeRepository: YoutubeRepository
+): ViewModel() {
+    private val _searchData: MutableStateFlow<List<Content>> = MutableStateFlow(emptyList())
     private val _searchResult = MutableStateFlow<Result<List<LatLng>>>(Result.success(emptyList()))
-    val searchResult: StateFlow<Result<List<LatLng>>> = _searchResult.asStateFlow()
-
     private val _latitude : MutableStateFlow<Double> = MutableStateFlow(0.0)
-    val latitude : StateFlow<Double> = _latitude
     private val _longitude : MutableStateFlow<Double> = MutableStateFlow(0.0)
+    private val _newBookmarkList: MutableStateFlow<List<LikedCafeteria>> = MutableStateFlow(emptyList())
+    private val _searchKeyword: MutableStateFlow<String> = MutableStateFlow("")
+    private val _bookmarkList: MutableStateFlow<List<Cafeteria>> = MutableStateFlow(emptyList())
+    private val _searchSuccessEvent = MutableSharedFlow<Boolean>()
+    val searchData: StateFlow<List<Content>> = _searchData.asStateFlow()
+    val latitude : StateFlow<Double> = _latitude
     val longitude : StateFlow<Double> = _longitude
+    val searchKeyword: StateFlow<String> = _searchKeyword.asStateFlow()
+    val newBookmarkList: StateFlow<List<LikedCafeteria>> = _newBookmarkList.asStateFlow()
+    val bookmarkList: StateFlow<List<Cafeteria>> = _bookmarkList.asStateFlow()
+    val searchSuccessEvent = _searchSuccessEvent.asSharedFlow()
 
-    fun updateSearchData(newData: String) {
-        _searchData.value = newData
+    init {
+        getNewBookmarkList()
+        getBookmarkList()
     }
 
-    fun getLatLang(name: String) {
+    fun getNewBookmarkList() {
         viewModelScope.launch(Dispatchers.Main) {
-            if (name == "바다회사랑") {
-                val seoulCityHall = LatLng(37.56040942740714, 126.92106201288655)
-                val dummyLatLngList = listOf(seoulCityHall)
-                _searchResult.update {
-                    Result.success(dummyLatLngList)
+            try {
+                val response = youtubeRepository.getYoutubeLikeCafeteriaList(SizeRequestVo(30))
+                _newBookmarkList.update { response.likedCafeteria }
+                _newBookmarkList.value.map {
+                    cafeteriaRepository.bookmarkCafeteria(BookmarkCafeteriaRequestVo(it.id))
                 }
-            } else {
-                _searchResult.value = Result.success(emptyList())
+            } catch (e: Exception) {
+                Log.e("lllllllllllll", e.toString())
             }
+        }
+    }
+
+    fun getBookmarkList() {
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                val response = cafeteriaRepository.getBookmarkList()
+                _bookmarkList.update { response.cafeteriaList }
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+
+    fun updateSearchKeyword(word: String) {
+        viewModelScope.launch {
+            _searchKeyword.update { word }
         }
     }
 
@@ -58,6 +93,15 @@ class NaverMapViewModel @Inject constructor(): ViewModel() {
             _longitude.update {
                 location.longitude
             }
+        }
+    }
+
+    fun searchCafeteria(keyword: String) {
+        viewModelScope.launch {
+            val response = cafeteriaRepository.searchCafeteria(keyword, SearchCafeteriaRequest(10,3, listOf("name", "asc")))
+            _searchData.update { response.content }
+            _searchSuccessEvent.emit(true)
+            Log.e("과연?", response.toString())
         }
     }
 }
