@@ -1,9 +1,6 @@
-package com.example.tastezip.navigation
+package com.example.tastezzip.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import com.example.tastezip.R
+import com.example.tastezzip.R
 
 object NavBarItems {
     val barItems = listOf(
@@ -25,7 +22,7 @@ object NavBarItems {
         BarItem(
             title = "Shorts",
             icon = R.drawable.ic_shorts,
-            route = ""
+            route = "shortsScreen"
         ),
         BarItem(
             title = "마이페이지",

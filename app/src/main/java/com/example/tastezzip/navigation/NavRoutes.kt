@@ -1,4 +1,4 @@
-package com.example.tastezip.navigation
+package com.example.tastezzip.navigation
 
 sealed class NavRoutes(val route: String) {
     data object Splash: NavRoutes("splash")
@@ -6,4 +6,5 @@ sealed class NavRoutes(val route: String) {
     data object UserInfo: NavRoutes("userInfo")
     data object NaverMapScreen: NavRoutes("naverMapScreen")
     data object StoreShortsScreen: NavRoutes("storeShortsScreen")
+    data object ShortsScreen: NavRoutes("shortsScreen")
 }
