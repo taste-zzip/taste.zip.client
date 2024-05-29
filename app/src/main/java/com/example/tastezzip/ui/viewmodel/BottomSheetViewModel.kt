@@ -1,90 +1,64 @@
-package com.example.tastezip.ui.viewmodel
+package com.example.tastezzip.ui.viewmodel
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tastezip.model.vo.VideoItemVo
+import com.example.tastezzip.data.repository.CafeteriaRepository
+import com.example.tastezzip.model.request.BookmarkCafeteriaRequestVo
+import com.example.tastezzip.model.response.cafeteria.detail.CafeteriaDetailResponse
+import com.example.tastezzip.model.response.cafeteria.detail.Video
+import com.example.tastezzip.model.vo.VideoItemVo
+import com.example.tastezzip.repository.VideoRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BottomSheetViewModel @Inject constructor(
-
+    private val cafeteriaRepository: CafeteriaRepository
 ): ViewModel() {
-    private val _shopTitleState: MutableStateFlow<String> = MutableStateFlow("")
-    private val _distanceState: MutableStateFlow<Int> = MutableStateFlow(0)
-    private val _typeState: MutableStateFlow<String> = MutableStateFlow("")
-    private val _videoCountState: MutableStateFlow<Int> = MutableStateFlow(0)
-    private val _videoListState: MutableStateFlow<List<VideoItemVo>> = MutableStateFlow(emptyList())
-    val shopTitleState: StateFlow<String> = _shopTitleState
-    val distanceState: StateFlow<Int> = _distanceState
-    val typeState: StateFlow<String> = _typeState
-    val videoCountState: StateFlow<Int> = _videoCountState
-    val videoListState: StateFlow<List<VideoItemVo>> = _videoListState
+    private val _cafeteriaDetail: MutableStateFlow<CafeteriaDetailResponse> = MutableStateFlow(CafeteriaDetailResponse())
+    private val _bookmarkSuccessEvent = MutableSharedFlow<String>()
+    private val _isLoading = MutableSharedFlow<Boolean>()
+    val cafeteriaDetail = _cafeteriaDetail.asStateFlow()
+    val bookmarkSuccessEvent = _bookmarkSuccessEvent.asSharedFlow()
+    val isLoading = _isLoading.asSharedFlow()
 
-    init {
-        initView()
+    fun getCafeteriaDetail(id: Long) {
+        viewModelScope.launch(Dispatchers.Main) {
+            _isLoading.emit(true)
+            val response = cafeteriaRepository.getCafeteriaDetail(id)
+            _cafeteriaDetail.update { response }
+            _isLoading.emit(false)
+        }
     }
 
-    private fun initView() {
+    fun setVideoList(videoList: List<Video>) {
         viewModelScope.launch(Dispatchers.Main) {
-            _shopTitleState.update {
-                "바다회사랑"
-            }
-            _distanceState.update {
-                225
-            }
-            _typeState.update {
-                "횟집"
-            }
-            _videoCountState.update {
-                25
-            }
-            _videoListState.update {
-                listOf(
-                    VideoItemVo(
-                        id = 1,
-                        platform = "",
-                        viewCount = 10,
-                        thumbnailUrl = "https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71a09951-6165-4bef-842d-955aa99e90e6.jpg",
-                        title = "뭉티기 맛집!",
-                    ),
-                    VideoItemVo(
-                        id = 1,
-                        platform = "",
-                        viewCount = 10,
-                        thumbnailUrl = "https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71a09951-6165-4bef-842d-955aa99e90e6.jpg",
-                        title = "뭉티기 맛집!",
-                    ),
-                    VideoItemVo(
-                        id = 1,
-                        platform = "",
-                        viewCount = 10,
-                        thumbnailUrl = "https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71a09951-6165-4bef-842d-955aa99e90e6.jpg",
-                        title = "뭉티기 맛집!",
-                    ),
-                    VideoItemVo(
-                        id = 1,
-                        platform = "",
-                        viewCount = 10,
-                        thumbnailUrl = "https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71a09951-6165-4bef-842d-955aa99e90e6.jpg",
-                        title = "뭉티기 맛집!",
-                    ),
-                    VideoItemVo(
-                        id = 1,
-                        platform = "",
-                        viewCount = 10,
-                        thumbnailUrl = "https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71a09951-6165-4bef-842d-955aa99e90e6.jpg",
-                        title = "뭉티기 맛집!",
-                    )
-                )
+            VideoRepositoryImpl.setVideoList(videoList)
+        }
+    }
+
+    fun setCafeteriaId(id: Long) {
+        viewModelScope.launch {
+            VideoRepositoryImpl.setCafeteriaId(id)
+        }
+    }
+
+    fun bookmarkCafeteria(id: Long) {
+        viewModelScope.launch {
+            try {
+                cafeteriaRepository.bookmarkCafeteria(BookmarkCafeteriaRequestVo(id))
+                _bookmarkSuccessEvent.emit("북마크에 등록하였습니다")
+            } catch (e: Exception) {
+                Log.e("bookmarkCafeteria", e.toString())
             }
         }
     }
