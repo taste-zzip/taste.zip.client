@@ -1,4 +1,4 @@
-package com.example.tastezip.application
+package com.example.tastezzip.application
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
