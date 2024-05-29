@@ -1,4 +1,4 @@
-package com.example.tastezip.ui.theme
+package com.example.tastezzip.ui.theme
 
 import android.app.Activity
 import android.os.Build

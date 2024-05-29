@@ -1,4 +1,4 @@
-package com.example.tastezip
+package com.example.tastezzip
 
 import org.junit.Test
 

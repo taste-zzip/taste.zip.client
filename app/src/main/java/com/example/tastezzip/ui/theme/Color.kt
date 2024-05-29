@@ -1,4 +1,4 @@
-package com.example.tastezip.ui.theme
+package com.example.tastezzip.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
