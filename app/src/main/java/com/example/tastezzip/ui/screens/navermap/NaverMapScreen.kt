@@ -1,9 +1,10 @@
-package com.example.tastezip.ui.screens.navermap
+package com.example.tastezzip.ui.screens.navermap
 
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,8 +34,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import com.example.tastezip.R
-import com.example.tastezip.ui.viewmodel.NaverMapViewModel
+import com.example.tastezzip.R
+import com.example.tastezzip.ui.viewmodel.NaverMapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
@@ -46,34 +47,52 @@ import com.naver.maps.map.compose.LocationTrackingMode
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.Marker
+import com.naver.maps.map.compose.MarkerDefaults
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
+import com.naver.maps.map.overlay.OverlayImage
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
-fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: () -> Unit) {
+fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: (Long) -> Unit) {
     val context = LocalContext.current
     val searchData by viewModel.searchData.collectAsState()
-    val searchResult by viewModel.searchResult.collectAsState()
+    val searchKeyword by viewModel.searchKeyword.collectAsState()
     val latitude by viewModel.latitude.collectAsState()
     val longitude by viewModel.longitude.collectAsState()
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     val keyboardController = LocalSoftwareKeyboardController.current
     val cameraPositionState = rememberCameraPositionState{ CameraPosition(LatLng(latitude, longitude), 10.0) }
+    var isInitialPositionSet by remember { mutableStateOf(false) }
+    val bookmarkList by viewModel.bookmarkList.collectAsState()
+    val customIcon = OverlayImage.fromResource(R.drawable.ic_bookmarked)
 
-    initUserPosition(context, fusedLocationClient, viewModel)
+    Log.e("bookmarkList", bookmarkList.toString())
+
+    LaunchedEffect(Unit) {
+        if (!isInitialPositionSet) {
+            initUserPosition(context, fusedLocationClient, viewModel)
+            isInitialPositionSet = true
+        }
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.searchSuccessEvent.collect { isSuccess ->
+            if (isSuccess) {
+                val first = searchData.firstOrNull()
+
+                if (first != null) {
+                    val firstLatLng = LatLng(first.latitude.toDouble(), first.longitude.toDouble())
+                    updateCameraPosition(cameraPositionState, firstLatLng, 15.0)
+                }
+            }
+        }
+    }
 
     LaunchedEffect(latitude, longitude) {
         updateCameraPosition(cameraPositionState, LatLng(latitude, longitude), 12.0)
-    }
-
-    LaunchedEffect(searchResult) {
-        val firstLatLng: LatLng? = searchResult.getOrNull()?.firstOrNull()
-        if (firstLatLng != null) {
-            updateCameraPosition(cameraPositionState, firstLatLng, 15.0)
-        }
     }
 
     val mapProperties by remember {
@@ -97,13 +116,26 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: () -> Unit) {
             ),
             cameraPositionState = cameraPositionState,
         ) {
-            searchResult.getOrNull()?.forEach { latLng ->
+            searchData.forEach {
+                val id = it.id
                 Marker(
-                    state = MarkerState(position = latLng),
+                    state = MarkerState(position = LatLng(it.latitude.toDouble(), it.longitude.toDouble())),
                     onClick = {
-                        onMarkerClick()
+                        onMarkerClick(id)
                         true
                     }
+                )
+            }
+
+            bookmarkList.forEach {
+                val id = it.id
+                Marker(
+                    state = MarkerState(position = LatLng(it.latitude.toDouble(), it.longitude.toDouble())),
+                    onClick = {
+                        onMarkerClick(id)
+                        true
+                    },
+                    icon = customIcon
                 )
             }
         }
@@ -122,8 +154,8 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: () -> Unit) {
                 )
         ) {
             TextField(
-                value = searchData,
-                onValueChange = { newData -> viewModel.updateSearchData(newData) },
+                value = searchKeyword,
+                onValueChange = { newData -> viewModel.updateSearchKeyword(newData) },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("찾고 싶은 음식점을 검색해보세요.") },
                 singleLine = true,
@@ -142,7 +174,7 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: () -> Unit) {
                 shape = RoundedCornerShape(10.dp),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.getLatLang(searchData)
+                        viewModel.searchCafeteria(searchKeyword)
                         updateCameraPosition(cameraPositionState, LatLng(latitude, longitude), 12.0)
                         keyboardController?.hide()
                     }
