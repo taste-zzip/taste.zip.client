@@ -1,4 +1,4 @@
-package com.example.tastezip.ui.screens.navermap
+package com.example.tastezzip.ui.screens.navermap
 
 import com.naver.maps.geometry.LatLng
 import ted.gun0912.clustering.clustering.TedClusterItem
