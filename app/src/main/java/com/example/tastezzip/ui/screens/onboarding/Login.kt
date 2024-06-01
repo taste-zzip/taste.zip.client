@@ -53,7 +53,7 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel = hil
         if (loginSuccess.value) {
             Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
 
-            navController.navigate(NavRoutes.NaverMapScreen.route) {
+            navController.navigate(NavRoutes.UserInfo.route) {
                 popUpTo(NavRoutes.Login.route) {
                     inclusive = true
                 }
