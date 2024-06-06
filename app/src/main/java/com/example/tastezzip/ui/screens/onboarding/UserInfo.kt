@@ -19,6 +19,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,18 +79,24 @@ fun UserInfo(navController: NavHostController, userInfoViewModel: UserInfoViewMo
 
         if (firstChecked && secondChecked && nickname.isNotEmpty() && oneLineInfo.isNotEmpty()) {
             userInfoViewModel.saveUserInfo(nickname, oneLineInfo)
-
-            Toast.makeText(context, "저장되었습니다.\n 닉네임: $nickname, 한 줄 소개: $oneLineInfo", Toast.LENGTH_SHORT).show()
-
-            navController.navigate(NavRoutes.NaverMapScreen.route) {
-                popUpTo(NavRoutes.UserInfo.route) {
-                    inclusive = true
-                }
-            }
+            userInfoViewModel.registration()
         } else if (firstChecked && secondChecked && nickname.isEmpty() || oneLineInfo.isEmpty()) {
             Toast.makeText(context, "필수 항목을 채워주세요.", Toast.LENGTH_SHORT).show()
         } else if (!firstChecked || !secondChecked) {
             Toast.makeText(context, "필수 항목에 동의해주세요.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        userInfoViewModel.registrationEventFlow.collect {
+            if (it) {
+                Toast.makeText(context, "저장되었습니다.\n 닉네임: $nickname, 한 줄 소개: $oneLineInfo", Toast.LENGTH_SHORT).show()
+                navController.navigate(NavRoutes.NaverMapScreen.route) {
+                    popUpTo(NavRoutes.UserInfo.route) {
+                        inclusive = true
+                    }
+                }
+            }
         }
     }
 
