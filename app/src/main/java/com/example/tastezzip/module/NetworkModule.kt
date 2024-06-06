@@ -1,9 +1,12 @@
 package com.example.tastezzip.module
 
+import android.content.Context
 import com.example.tastezzip.util.BASE_URL
+import com.example.tastezzip.util.UserInfo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -18,8 +21,9 @@ import javax.inject.Singleton
 object NetworkModule {
     @Singleton
     @Provides
-    fun provideOkHttpClient(): OkHttpClient {
-        val accessToken = "eyJhbGciOiJIUzUxMiJ9.eyJkZXRhaWwiOnsidXNlcklkIjoxMX0sInR5cGUiOiJSRUZSRVNIX1RPS0VOIiwiaWF0IjoxNzE2MzgzNTk0LCJleHAiOjE3MTg4MDI3OTR9.1cqmzug6Wxe3-KzDgl4JRf8CjbLCLz2mjvoI9Mit93ApoN5JvANI5LbyE1XEAzYemrTchhqVpIum19SSaL4j8g"
+    fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
+        val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val accessToken = sharedPreferences.getString("accessToken", "")
         val httpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
         val headerInterceptor = Interceptor{

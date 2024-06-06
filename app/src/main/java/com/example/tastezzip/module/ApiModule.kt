@@ -1,5 +1,6 @@
 package com.example.tastezzip.module
 
+import com.example.tastezzip.data.api.AccountApi
 import com.example.tastezzip.data.api.AuthApi
 import com.example.tastezzip.data.api.CafeteriaApi
 import com.example.tastezzip.data.api.VideoApi
@@ -45,5 +46,13 @@ object ApiModule {
         retrofit: Retrofit
     ): YoutubeApi {
         return retrofit.create(YoutubeApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAccountApi(
+        retrofit: Retrofit
+    ): AccountApi {
+        return retrofit.create(AccountApi::class.java)
     }
 }

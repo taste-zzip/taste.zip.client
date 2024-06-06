@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Text
+import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,17 +52,31 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel = hil
     val errorMessage = loginViewModel.errorMessage.collectAsState()
 
     LaunchedEffect(loginSuccess.value) {
-        if (loginSuccess.value) {
-            Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, errorMessage.value, Toast.LENGTH_SHORT).show()
+    }
 
-            navController.navigate(NavRoutes.NaverMapScreen.route) {
-                popUpTo(NavRoutes.Login.route) {
-                    inclusive = true
+    LaunchedEffect(key1 = true) {
+        loginViewModel.loginEventFlow.collect {
+            when (it) {
+                true -> {
+                    Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    navController.navigate(NavRoutes.NaverMapScreen.route) {
+                        popUpTo(NavRoutes.Login.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+                false -> {
+                    Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    navController.navigate(NavRoutes.UserInfo.route) {
+                        popUpTo(NavRoutes.Login.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             }
-
-        } else if (errorMessage.value?.isNotEmpty() == true) {
-            Toast.makeText(context, errorMessage.value, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -127,6 +143,10 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel = hil
                         painter = painterResource(id = R.drawable.btn_google_login),
                         contentDescription = "btn_google_login"
                     )
+                }
+
+                Button(onClick = { loginViewModel.deleteAccount() }) {
+                    Text(text = "삭제")
                 }
             }
         }
