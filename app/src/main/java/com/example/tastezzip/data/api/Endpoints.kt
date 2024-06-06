@@ -7,7 +7,8 @@ object Endpoints {
     object Auth {
         private const val AUTH = "$API/auth"
         private const val OATH = "/oauth"
-        const val GOOGLE = "$AUTH$OATH/login"
+        const val REGISTRATION = "$AUTH/registration"
+        const val LOGIN = "$AUTH/login"
     }
 
     object Cafeteria {
@@ -27,5 +28,9 @@ object Endpoints {
     object Youtube{
         private const val YOUTUBE = "$API/youtube"
         const val LIKE = "$YOUTUBE/like-cafeteria-update"
+    }
+
+    object Account{
+        const val ACCOUNT = "$API/account"
     }
 }
