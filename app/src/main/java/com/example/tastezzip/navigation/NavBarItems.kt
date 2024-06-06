@@ -12,7 +12,7 @@ object NavBarItems {
         BarItem(
             title = "추천",
             icon = R.drawable.ic_thumb_up,
-            route = ""
+            route = "recommendScreen"
         ),
         BarItem(
             title = "홈",
