@@ -47,6 +47,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.tastezzip.navigation.NavBarItems
 import com.example.tastezzip.ui.screens.navermap.BottomSheetLayout
+import com.example.tastezzip.ui.screens.recommend.RecommendRestaurant
 import com.example.tastezzip.ui.screens.shorts.ShortsScreen
 import com.example.tastezzip.ui.screens.shorts.ShortsTapScreen
 
@@ -145,6 +146,11 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
         composable(NavRoutes.ShortsScreen.route) {
             LaunchedEffect(Unit) { bottomBarState.value = true }
             ShortsTapScreen(lifecycleOwner = LocalLifecycleOwner.current)
+        }
+
+        composable(NavRoutes.RecommendScreen.route) {
+            LaunchedEffect(Unit) { bottomBarState.value = true }
+            RecommendRestaurant()
         }
     }
 }

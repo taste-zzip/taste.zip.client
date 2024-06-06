@@ -7,4 +7,5 @@ sealed class NavRoutes(val route: String) {
     data object NaverMapScreen: NavRoutes("naverMapScreen")
     data object StoreShortsScreen: NavRoutes("storeShortsScreen")
     data object ShortsScreen: NavRoutes("shortsScreen")
+    data object RecommendScreen: NavRoutes("recommendScreen")
 }
