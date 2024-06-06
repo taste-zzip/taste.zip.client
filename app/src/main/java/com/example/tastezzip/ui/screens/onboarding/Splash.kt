@@ -25,6 +25,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun Splash(navController: NavHostController, loginViewModel: LoginViewModel = hiltViewModel()) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -56,9 +57,17 @@ fun Splash(navController: NavHostController, loginViewModel: LoginViewModel = hi
         
         LaunchedEffect(key1 = true) {
             delay(2000)
-            navController.navigate(NavRoutes.Login.route) {
-                popUpTo(NavRoutes.Splash.route) {
-                    inclusive = true
+            if (loginViewModel.hasAccessToken()) {
+                navController.navigate(NavRoutes.NaverMapScreen.route) {
+                    popUpTo(NavRoutes.Splash.route) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                navController.navigate(NavRoutes.Login.route) {
+                    popUpTo(NavRoutes.Splash.route) {
+                        inclusive = true
+                    }
                 }
             }
         }
