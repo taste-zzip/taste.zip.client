@@ -29,7 +29,6 @@ fun TopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
             .background(colorResource(id = R.color.background))
     ) {
         Column {
