@@ -1,5 +1,6 @@
 package com.example.tastezzip.ui.screens.recommend
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -67,7 +69,7 @@ fun RecommendRestaurant(viewModel: RecommendRestaurantViewModel = hiltViewModel(
                     .padding(10.dp)
             ) {
                 items(recommendList) {
-                    RecommendItem(item = it)
+                    RecommendItem(item = it, type = "recommendRestaurant")
                 }
             }
         }
@@ -75,7 +77,7 @@ fun RecommendRestaurant(viewModel: RecommendRestaurantViewModel = hiltViewModel(
 }
 
 @Composable
-fun RecommendItem(item: RecommendItemVo) {
+fun RecommendItem(item: RecommendItemVo, type: String) {
 
     Box(
         modifier = Modifier
@@ -83,7 +85,23 @@ fun RecommendItem(item: RecommendItemVo) {
             .height(270.dp)
     ) {
         Column {
-            CustomText(text = item.restaurantTitle, fontSize = 22.sp, font = Font(R.font.pretendard_bold), color = Color.Black)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CustomText(
+                    text = item.restaurantTitle,
+                    fontSize = 22.sp,
+                    font = Font(R.font.pretendard_bold),
+                    color = Color.Black
+                )
+                if (type == "myPage") {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(painter = painterResource(id = R.drawable.ic_delete), contentDescription = "")
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(5.dp))
             CustomText(
                 text = item.restaurantType,
