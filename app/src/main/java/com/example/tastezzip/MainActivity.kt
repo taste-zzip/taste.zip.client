@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -161,7 +162,7 @@ fun BottomNavBar(navController: NavHostController, bottomBarState: MutableState<
     AnimatedVisibility(
         visible = bottomBarState.value
     ) {
-        var currentSelectedItem by remember { mutableStateOf(2) }
+        var currentSelectedItem by remember { mutableIntStateOf(2) }
 
         NavigationBar(
             containerColor = Color.White,
@@ -179,6 +180,7 @@ fun BottomNavBar(navController: NavHostController, bottomBarState: MutableState<
                             navController.navigate(navItem.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
+                                    inclusive = true
                                 }
                                 launchSingleTop = true
                                 restoreState = true
