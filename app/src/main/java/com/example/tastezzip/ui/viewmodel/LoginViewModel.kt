@@ -36,7 +36,7 @@ class LoginViewModel @Inject constructor(
     private val _loginSuccess : MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _errorMessage : MutableStateFlow<String?> = MutableStateFlow("")
     private val _loginEventFlow: MutableSharedFlow<Boolean> = MutableSharedFlow()
-    private var accessToken: String? = null
+    private var refreshToken: String? = null
     val loginSuccess: StateFlow<Boolean> = _loginSuccess
     val errorMessage: StateFlow<String?> = _errorMessage
     val loginEventFlow = _loginEventFlow.asSharedFlow()
@@ -63,6 +63,7 @@ class LoginViewModel @Inject constructor(
                         val response = authRepository.login(request = LoginRequestVo(authCode))
                         Log.e("로그인 결과", response.toString())
                         sharedPreferences.edit().putString("accessToken", response.accessToken).apply()
+                        sharedPreferences.edit().putString("refreshToken", response.refreshToken).apply()
                         Log.e("sharedPrefs", sharedPreferences.getString("accessToken", "").toString())
                         _loginEventFlow.emit(true)
                     }
@@ -88,17 +89,12 @@ class LoginViewModel @Inject constructor(
         launcher.launch(googleSignInClient.signInIntent)
     }
 
-    fun deleteAccount() {
-        viewModelScope.launch {
-            accountRepository.deleteAccount()
-        }
-    }
-
     private fun getAccessToken() {
-        accessToken = sharedPreferences.getString("accessToken", null)
+        refreshToken = sharedPreferences.getString("refreshToken", null)
+        Log.e("accessToken", refreshToken.toString())
     }
 
     fun hasAccessToken(): Boolean {
-        return !accessToken.isNullOrEmpty()
+        return !refreshToken.isNullOrEmpty()
     }
 }
