@@ -50,8 +50,7 @@ class NaverMapViewModel @Inject constructor(
     val searchSuccessEvent = _searchSuccessEvent.asSharedFlow()
 
     init {
-        getNewBookmarkList()
-        getBookmarkList()
+//        getNewBookmarkList()
     }
 
     fun getNewBookmarkList() {
@@ -62,17 +61,19 @@ class NaverMapViewModel @Inject constructor(
                 _newBookmarkList.value.map {
                     cafeteriaRepository.bookmarkCafeteria(BookmarkCafeteriaRequestVo(it.id))
                 }
+                getBookmarkList()
             } catch (e: Exception) {
                 Log.e("lllllllllllll", e.toString())
             }
         }
     }
 
-    fun getBookmarkList() {
+     fun getBookmarkList() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 val response = cafeteriaRepository.getBookmarkList()
                 _bookmarkList.update { response.cafeteriaList }
+                Log.e("bookmarkList", response.toString())
             } catch (e: Exception) {
 
             }
