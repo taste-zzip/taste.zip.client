@@ -37,6 +37,7 @@ class UserInfoViewModel @Inject constructor(
             val response = authRepository.registration(request = RegistrationRequestVo(nickname = nickname, oauth = Oauth(code = UserInfo.authCode)))
             Log.e("회원가입 결과", response.toString())
             sharedPreferences.edit().putString("accessToken", response.accessToken).apply()
+            sharedPreferences.edit().putString("refreshToken", response.refreshToken).apply()
             Log.e("sharedPrefs", sharedPreferences.getString("accessToken", "").toString())
             _registrationEventFlow.emit(true)
         }
