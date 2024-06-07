@@ -2,11 +2,14 @@ package com.example.tastezzip.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -29,17 +32,22 @@ fun TopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .height(70.dp)
             .background(colorResource(id = R.color.background))
     ) {
-        Column {
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(
-                    onClick = onClick
-                ) {
-                    if (imageButtonSourceId != null) {
+                if (imageButtonSourceId != null) {
+                    IconButton(
+                        onClick = onClick
+                    ) {
+
                         Image(
                             painter = painterResource(id = imageButtonSourceId),
                             contentDescription = ""
