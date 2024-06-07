@@ -72,6 +72,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     implementation("androidx.hilt:hilt-work:1.2.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+    debugImplementation(libs.ui.tooling)
 
     kapt("com.google.dagger:hilt-compiler:2.51.1")
 

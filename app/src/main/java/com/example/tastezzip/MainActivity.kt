@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,6 +48,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.tastezzip.navigation.NavBarItems
 import com.example.tastezzip.ui.screens.navermap.BottomSheetLayout
+import com.example.tastezzip.ui.screens.recommend.RecommendRestaurant
 import com.example.tastezzip.ui.screens.shorts.ShortsScreen
 import com.example.tastezzip.ui.screens.shorts.ShortsTapScreen
 
@@ -146,6 +148,11 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
             LaunchedEffect(Unit) { bottomBarState.value = true }
             ShortsTapScreen(lifecycleOwner = LocalLifecycleOwner.current)
         }
+
+        composable(NavRoutes.RecommendScreen.route) {
+            LaunchedEffect(Unit) { bottomBarState.value = true }
+            RecommendRestaurant()
+        }
     }
 }
 
@@ -155,7 +162,7 @@ fun BottomNavBar(navController: NavHostController, bottomBarState: MutableState<
     AnimatedVisibility(
         visible = bottomBarState.value
     ) {
-        var currentSelectedItem by remember { mutableStateOf(2) }
+        var currentSelectedItem by remember { mutableIntStateOf(2) }
 
         NavigationBar(
             containerColor = Color.White,
@@ -173,6 +180,7 @@ fun BottomNavBar(navController: NavHostController, bottomBarState: MutableState<
                             navController.navigate(navItem.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
+                                    inclusive = true
                                 }
                                 launchSingleTop = true
                                 restoreState = true

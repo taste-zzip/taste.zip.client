@@ -144,10 +144,6 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel = hil
                         contentDescription = "btn_google_login"
                     )
                 }
-
-                Button(onClick = { loginViewModel.deleteAccount() }) {
-                    Text(text = "삭제")
-                }
             }
         }
     }
