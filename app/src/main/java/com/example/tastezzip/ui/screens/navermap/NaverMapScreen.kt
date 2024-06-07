@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -32,9 +36,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tastezzip.R
+import com.example.tastezzip.ui.theme.MainActivityTheme
 import com.example.tastezzip.ui.viewmodel.NaverMapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -69,7 +76,7 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: (Long) -> Unit) 
     val bookmarkList by viewModel.bookmarkList.collectAsState()
     val customIcon = OverlayImage.fromResource(R.drawable.ic_bookmarked)
 
-    Log.e("bookmarkList", bookmarkList.toString())
+
 
     LaunchedEffect(Unit) {
         if (!isInitialPositionSet) {
@@ -180,6 +187,29 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: (Long) -> Unit) 
                     }
                 ),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+            )
+        }
+
+        IconButton(
+            onClick = {
+                viewModel.getNewBookmarkList()
+                viewModel.getBookmarkList()
+            },
+            modifier = Modifier
+                .size(80.dp, 80.dp)
+                .align(Alignment.BottomEnd)
+                .padding(15.dp),
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color.Unspecified,
+                contentColor = Color.Unspecified,
+                disabledContentColor = Color.Unspecified,
+                disabledContainerColor = Color.Unspecified
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.app_icon),
+                contentDescription = "", tint = Color.Unspecified,
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
