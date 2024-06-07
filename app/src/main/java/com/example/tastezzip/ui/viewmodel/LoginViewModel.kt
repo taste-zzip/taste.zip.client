@@ -36,9 +36,14 @@ class LoginViewModel @Inject constructor(
     private val _loginSuccess : MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _errorMessage : MutableStateFlow<String?> = MutableStateFlow("")
     private val _loginEventFlow: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    private var accessToken: String? = null
     val loginSuccess: StateFlow<Boolean> = _loginSuccess
     val errorMessage: StateFlow<String?> = _errorMessage
     val loginEventFlow = _loginEventFlow.asSharedFlow()
+
+    init {
+        getAccessToken()
+    }
 
     fun handleGoogleLoginResult(data: Intent?) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -87,5 +92,13 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             accountRepository.deleteAccount()
         }
+    }
+
+    private fun getAccessToken() {
+        accessToken = sharedPreferences.getString("accessToken", null)
+    }
+
+    fun hasAccessToken(): Boolean {
+        return !accessToken.isNullOrEmpty()
     }
 }

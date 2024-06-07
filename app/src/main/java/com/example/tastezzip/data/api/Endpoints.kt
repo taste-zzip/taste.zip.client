@@ -9,6 +9,7 @@ object Endpoints {
         private const val OATH = "/oauth"
         const val REGISTRATION = "$AUTH/registration"
         const val LOGIN = "$AUTH/login"
+        const val INTROSPECT = "$AUTH/introspect"
     }
 
     object Cafeteria {

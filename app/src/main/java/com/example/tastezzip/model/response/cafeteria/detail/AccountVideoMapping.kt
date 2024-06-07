@@ -8,7 +8,7 @@ data class AccountVideoMapping(
     @SerializedName("LIKE")
     val like: LikeType? = null,
     @SerializedName("TROPHY")
-    val trophy: TrophyType,
+    val trophy: TrophyType = TrophyType.TROPHY,
     @SerializedName("STAR")
-    val star: Int
+    val star: Int = 0
 )
