@@ -8,4 +8,6 @@ sealed class NavRoutes(val route: String) {
     data object StoreShortsScreen: NavRoutes("storeShortsScreen")
     data object ShortsScreen: NavRoutes("shortsScreen")
     data object RecommendScreen: NavRoutes("recommendScreen")
+    data object MyPageScreen: NavRoutes("myPage")
+    data object BookmarkCafeteriaScreen: NavRoutes("bookmarkCafeteria")
 }

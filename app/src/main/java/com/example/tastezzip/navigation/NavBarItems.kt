@@ -27,7 +27,7 @@ object NavBarItems {
         BarItem(
             title = "마이페이지",
             icon = R.drawable.ic_my_page,
-            route = ""
+            route = "myPage"
         )
     )
 }

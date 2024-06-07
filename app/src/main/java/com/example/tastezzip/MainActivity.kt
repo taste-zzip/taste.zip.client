@@ -3,6 +3,7 @@ package com.example.tastezzip
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
@@ -47,6 +48,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.tastezzip.navigation.NavBarItems
+import com.example.tastezzip.ui.screens.mypage.BookmarkCafeteria
+import com.example.tastezzip.ui.screens.mypage.MyPageScreen
 import com.example.tastezzip.ui.screens.navermap.BottomSheetLayout
 import com.example.tastezzip.ui.screens.recommend.RecommendRestaurant
 import com.example.tastezzip.ui.screens.shorts.ShortsScreen
@@ -63,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(this)
+                    MainScreen()
                 }
             }
         }
@@ -71,7 +74,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(context: Context) {
+fun MainScreen() {
     val bottomBarState = rememberSaveable { mutableStateOf(false) }
     val isShorts = remember { mutableStateOf(false) }
 
@@ -153,6 +156,21 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
             LaunchedEffect(Unit) { bottomBarState.value = true }
             RecommendRestaurant()
         }
+
+        composable(NavRoutes.MyPageScreen.route) {
+            val onClickBookmarkCafeteria = {
+                navController.navigate(NavRoutes.BookmarkCafeteriaScreen.route)
+            }
+            LaunchedEffect(Unit) { bottomBarState.value = true }
+            MyPageScreen(onClickBookmarkCafeteria)
+        }
+
+        composable(NavRoutes.BookmarkCafeteriaScreen.route) {
+            LaunchedEffect(key1 = Unit) { bottomBarState.value = true }
+            BookmarkCafeteria {
+                navController.popBackStack()
+            }
+        }
     }
 }
 
@@ -178,12 +196,18 @@ fun BottomNavBar(navController: NavHostController, bottomBarState: MutableState<
                         if (currentSelectedItem != index) {
                             currentSelectedItem = index
                             navController.navigate(navItem.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
+                                popUpTo(currentRoute!!) {
                                     saveState = true
                                     inclusive = true
                                 }
                                 launchSingleTop = true
                                 restoreState = true
+                                anim {
+                                    enter = 0
+                                    exit = 0
+                                    popEnter = 0
+                                    popExit = 0
+                                }
                             }
                         }
                     },
