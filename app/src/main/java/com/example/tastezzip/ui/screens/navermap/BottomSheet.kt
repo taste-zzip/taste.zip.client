@@ -132,8 +132,13 @@ fun BottomSheetLayout(
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = "ic_info", tint = Color.Unspecified)
+                        Spacer(modifier = Modifier.width(5.dp))
                         CustomText(text = "리뷰 영상 " + cafeteriaDetail.videoCnt + "개", fontSize = 12.sp, font = Font(R.font.pretendard_medium), color = Color.Black)
                     }
+
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    CustomText(text = "주소 " + cafeteriaDetail.address, fontSize = 12.sp, font = Font(R.font.pretendard_medium), color = Color.Black)
 
                     Spacer(modifier = Modifier.height(10.dp))
 
@@ -198,7 +203,7 @@ fun ShortsItem(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(178.dp),
+                .height(318.dp),
             shape = RoundedCornerShape(corner = CornerSize(10.dp)),
             elevation = 2.dp
         ) {
