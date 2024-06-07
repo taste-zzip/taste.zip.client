@@ -11,4 +11,10 @@
 
     <!--  RecommendRestaurant  -->
     <string name="recommend_title">연남동 추천 식당</string>
+
+    <!--  MyPage  -->
+    <string name="my_page_settings">설정</string>
+    <string name="my_page_bookmark_cafeteria">내가 좋아하는 맛집</string>
+    <string name="my_page_withdrawn">회원탈퇴</string>
+    <string name="my_page_delete_account">맛.zip에서 탈퇴하시겠습니까?</string>
 </resources>
