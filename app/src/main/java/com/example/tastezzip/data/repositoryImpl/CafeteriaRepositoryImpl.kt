@@ -4,9 +4,11 @@ import com.example.tastezzip.data.api.CafeteriaApi
 import com.example.tastezzip.data.repository.CafeteriaRepository
 import com.example.tastezzip.model.request.BookmarkCafeteriaRequestVo
 import com.example.tastezzip.model.request.SearchCafeteriaRequest
+import com.example.tastezzip.model.request.comment.get.GetCommentRequestVo
 import com.example.tastezzip.model.response.cafeteria.SearchCafeteriaResponse
 import com.example.tastezzip.model.response.cafeteria.bookmark.BookmarkListResponse
 import com.example.tastezzip.model.response.cafeteria.detail.CafeteriaDetailResponse
+import com.example.tastezzip.model.response.comment.get.GetCommentResponse
 import javax.inject.Inject
 
 class CafeteriaRepositoryImpl @Inject constructor(
@@ -29,5 +31,9 @@ class CafeteriaRepositoryImpl @Inject constructor(
 
     override suspend fun getBookmarkList(): BookmarkListResponse {
         return cafeteriaApi.getBookmarkList()
+    }
+
+    override suspend fun getComment(id: Long, request: GetCommentRequestVo): GetCommentResponse {
+        return cafeteriaApi.getComment(id = id, pageable = request)
     }
 }
