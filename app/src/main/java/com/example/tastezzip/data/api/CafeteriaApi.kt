@@ -2,9 +2,11 @@ package com.example.tastezzip.data.api
 
 import com.example.tastezzip.model.request.BookmarkCafeteriaRequestVo
 import com.example.tastezzip.model.request.SearchCafeteriaRequest
+import com.example.tastezzip.model.request.comment.get.GetCommentRequestVo
 import com.example.tastezzip.model.response.cafeteria.SearchCafeteriaResponse
 import com.example.tastezzip.model.response.cafeteria.bookmark.BookmarkListResponse
 import com.example.tastezzip.model.response.cafeteria.detail.CafeteriaDetailResponse
+import com.example.tastezzip.model.response.comment.get.GetCommentResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -20,7 +22,7 @@ interface CafeteriaApi {
 
     @GET(Endpoints.Cafeteria.CAFETERIAID)
     suspend fun getCafeteriaDetail(
-        @Path("id") id: Long
+        @Path("cafeteriaId") id: Long
     ): CafeteriaDetailResponse
 
     @POST(Endpoints.Cafeteria.BOOKMARK)
@@ -28,4 +30,10 @@ interface CafeteriaApi {
 
     @GET(Endpoints.Cafeteria.LIKE)
     suspend fun getBookmarkList(): BookmarkListResponse
+
+    @GET(Endpoints.Cafeteria.COMMENT)
+    suspend fun getComment(
+        @Path("cafeteriaId") id: Long,
+        @Query("pageable") pageable: GetCommentRequestVo
+    ): GetCommentResponse
 }
