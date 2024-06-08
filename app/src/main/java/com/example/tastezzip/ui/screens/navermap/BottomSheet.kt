@@ -91,6 +91,14 @@ fun BottomSheetLayout(
             }
         }
     }
+    val goToCommentEvent = bottomSheetViewModel.goToCafeteriaCommentEvent.collectAsState(initial = false).value
+
+    LaunchedEffect(goToCommentEvent) {
+        if (goToCommentEvent) {
+            val id = cafeteriaDetail.id
+            navController.navigate(NavRoutes.CafeteriaCommentScreen.createRoute(id))
+        }
+    }
 
     LaunchedEffect(key1 = cafeteriaDetail) {
         if (cafeteriaDetail.id == -1L) return@LaunchedEffect
@@ -301,7 +309,9 @@ fun FourEqualButtonsWithDividers(
                 )
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        viewModel.onClickBtnComment()
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
