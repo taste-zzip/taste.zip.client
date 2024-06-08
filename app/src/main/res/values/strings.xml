@@ -9,6 +9,9 @@
     <string name="shorts">Shorts</string>
     <string name="my_page">마이페이지</string>
 
+    <!--  word  -->
+    <string name="comment">댓글</string>
+
     <!--  RecommendRestaurant  -->
     <string name="recommend_title">연남동 추천 식당</string>
 
