@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tastezzip.data.repository.CafeteriaRepository
 import com.example.tastezzip.model.request.BookmarkCafeteriaRequestVo
+import com.example.tastezzip.model.request.comment.get.GetCommentRequestVo
 import com.example.tastezzip.model.response.cafeteria.detail.CafeteriaDetailResponse
 import com.example.tastezzip.model.response.cafeteria.detail.Video
+import com.example.tastezzip.model.response.comment.get.Content
 import com.example.tastezzip.model.vo.VideoItemVo
 import com.example.tastezzip.repository.VideoRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,9 +29,13 @@ class BottomSheetViewModel @Inject constructor(
     private val _cafeteriaDetail: MutableStateFlow<CafeteriaDetailResponse> = MutableStateFlow(CafeteriaDetailResponse())
     private val _bookmarkSuccessEvent = MutableSharedFlow<String>()
     private val _isLoading = MutableSharedFlow<Boolean>()
+    private val _commentList: MutableStateFlow<List<Content>> = MutableStateFlow(emptyList())
+    private val _goToCafeteriaCommentEvent: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val cafeteriaDetail = _cafeteriaDetail.asStateFlow()
     val bookmarkSuccessEvent = _bookmarkSuccessEvent.asSharedFlow()
     val isLoading = _isLoading.asSharedFlow()
+    val commentList = _commentList.asStateFlow()
+    val goToCafeteriaCommentEvent = _goToCafeteriaCommentEvent.asSharedFlow()
 
     fun getCafeteriaDetail(id: Long) {
         viewModelScope.launch(Dispatchers.Main) {
@@ -59,6 +65,24 @@ class BottomSheetViewModel @Inject constructor(
                 _bookmarkSuccessEvent.emit("북마크에 등록하였습니다")
             } catch (e: Exception) {
                 Log.e("bookmarkCafeteria", e.toString())
+            }
+        }
+    }
+
+    fun onClickBtnComment() {
+        viewModelScope.launch {
+            _goToCafeteriaCommentEvent.emit(true)
+        }
+    }
+
+    fun getCafeteriaComment(id: Long) {
+        viewModelScope.launch {
+            try {
+                val response = cafeteriaRepository.getComment(id = id, request = GetCommentRequestVo(page = 5, size = 5, sort = listOf("id,DESC")))
+                Log.e("BottomSheetViewModel, getCafeteriaComment", response.toString())
+                _commentList.update { response.commentList.content }
+            } catch (e: Exception) {
+                Log.e("BottomSheetViewModel, getCafeteriaComment()", e.toString())
             }
         }
     }
