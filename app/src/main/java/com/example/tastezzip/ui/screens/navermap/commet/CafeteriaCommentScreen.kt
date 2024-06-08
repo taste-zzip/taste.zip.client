@@ -1,8 +1,6 @@
 package com.example.tastezzip.ui.screens.navermap.commet
 
 import android.util.Log
-import android.widget.Space
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,16 +54,21 @@ fun CafeteriaCommentScreen(viewModel: BottomSheetViewModel = hiltViewModel(), ca
 
     val cafeteriaDetail by viewModel.cafeteriaDetail.collectAsState()
     val commentList by viewModel.commentList.collectAsState()
+    val createComment = { id: Long, content: String ->
+        viewModel.createComment(id, content)
+        viewModel.getCafeteriaComment(id)
+    }
 
     Log.e("댓글 페이지", cafeteriaDetail.toString())
 
-    CommentScreen(cafeteriaDetail = cafeteriaDetail, commentList = commentList)
+    CommentScreen(cafeteriaDetail = cafeteriaDetail, commentList = commentList, createComment)
 }
 
 @Composable
 fun CommentScreen(
     cafeteriaDetail: CafeteriaDetailResponse,
-    commentList: List<Content>
+    commentList: List<Content>,
+    createComment: (Long, String) -> Unit
 ) {
     val comment = remember { mutableStateOf("") }
 
@@ -141,16 +144,20 @@ fun CommentScreen(
                         onValueChange = {
                             comment.value = it
                         },
-                        shape = RoundedCornerShape(8.dp), // 모서리 둥글게
+                        shape = RoundedCornerShape(8.dp),
                         colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.White, // 배경색
+                            backgroundColor = Color.White,
                             cursorColor = Color.Black,
-                            focusedIndicatorColor = Color.Transparent, // 포커스 됐을 때 하단 테두리 색
-                            unfocusedIndicatorColor = Color.Transparent // 포커스 안 됐을 때 하단 테두리 색
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
                         ),
-                        keyboardActions = KeyboardActions (onDone = {
-                            
-                        })
+                        keyboardActions = KeyboardActions (
+                            onDone = {
+                                createComment(cafeteriaDetail.id, comment.value)
+                                comment.value = ""
+                            }
+                        ),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
                     )
                 }
             }
@@ -253,7 +260,10 @@ fun PreviewCommentScreen() {
                         id = 1L
                     )
                 )
-            )
+            ),
+            createComment = { Long, String ->
+
+            }
         )
     }
 }

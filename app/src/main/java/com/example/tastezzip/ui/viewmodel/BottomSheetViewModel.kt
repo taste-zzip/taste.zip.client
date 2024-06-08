@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tastezzip.data.repository.CafeteriaRepository
 import com.example.tastezzip.model.request.BookmarkCafeteriaRequestVo
 import com.example.tastezzip.model.request.comment.get.GetCommentRequestVo
+import com.example.tastezzip.model.request.comment.post.CreateCommentRequestVo
 import com.example.tastezzip.model.response.cafeteria.detail.CafeteriaDetailResponse
 import com.example.tastezzip.model.response.cafeteria.detail.Video
 import com.example.tastezzip.model.response.comment.get.Content
@@ -83,6 +84,17 @@ class BottomSheetViewModel @Inject constructor(
                 _commentList.update { response.commentList.content }
             } catch (e: Exception) {
                 Log.e("BottomSheetViewModel, getCafeteriaComment()", e.toString())
+            }
+        }
+    }
+
+    fun createComment(id: Long, content: String) {
+        viewModelScope.launch {
+            try {
+                Log.e("댓글 생성", content)
+                cafeteriaRepository.createComment(id = id, request = CreateCommentRequestVo(content = content))
+            } catch (e: Exception) {
+                Log.e("createComment", e.toString())
             }
         }
     }
