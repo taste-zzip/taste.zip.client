@@ -93,6 +93,7 @@ class BottomSheetViewModel @Inject constructor(
             try {
                 Log.e("댓글 생성", content)
                 cafeteriaRepository.createComment(id = id, request = CreateCommentRequestVo(content = content))
+                getCafeteriaComment(id)
             } catch (e: Exception) {
                 Log.e("createComment", e.toString())
             }
