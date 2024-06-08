@@ -10,4 +10,9 @@ sealed class NavRoutes(val route: String) {
     data object RecommendScreen: NavRoutes("recommendScreen")
     data object MyPageScreen: NavRoutes("myPage")
     data object BookmarkCafeteriaScreen: NavRoutes("bookmarkCafeteria")
+    data object CafeteriaCommentScreen: NavRoutes("cafeteriaComment") {
+        fun createRoute(id: Long): String {
+            return "${NavRoutes.CafeteriaCommentScreen.route}/$id"
+        }
+    }
 }

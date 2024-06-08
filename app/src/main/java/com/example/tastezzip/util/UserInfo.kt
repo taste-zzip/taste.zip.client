@@ -5,4 +5,5 @@ object UserInfo {
     var authCode: String = ""
     var accessToken: String = ""
     var refreshToken: String = ""
+    var profileImage: String = ""
 }

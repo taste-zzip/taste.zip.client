@@ -15,9 +15,10 @@ object Endpoints {
     object Cafeteria {
         private const val CAFETERIA = "$API/cafeteria"
         const val LIST = "$CAFETERIA/list"
-        const val CAFETERIAID = "$CAFETERIA/{id}"
+        const val CAFETERIAID = "$CAFETERIA/{cafeteriaId}"
         const val BOOKMARK = "$CAFETERIA/account"
         const val LIKE = "$CAFETERIA/like"
+        const val COMMENT = "$CAFETERIAID/comment"
     }
 
     object Video {

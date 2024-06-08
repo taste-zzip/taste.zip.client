@@ -51,6 +51,7 @@ import com.example.tastezzip.navigation.NavBarItems
 import com.example.tastezzip.ui.screens.mypage.BookmarkCafeteria
 import com.example.tastezzip.ui.screens.mypage.MyPageScreen
 import com.example.tastezzip.ui.screens.navermap.BottomSheetLayout
+import com.example.tastezzip.ui.screens.navermap.commet.CafeteriaCommentScreen
 import com.example.tastezzip.ui.screens.recommend.RecommendRestaurant
 import com.example.tastezzip.ui.screens.shorts.ShortsScreen
 import com.example.tastezzip.ui.screens.shorts.ShortsTapScreen
@@ -170,6 +171,15 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
             BookmarkCafeteria {
                 navController.popBackStack()
             }
+        }
+
+        composable(
+            "${NavRoutes.CafeteriaCommentScreen.route}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id") ?: 0L
+            LaunchedEffect(key1 = Unit) { bottomBarState.value = true }
+            CafeteriaCommentScreen(cafeteriaId = id)
         }
     }
 }
