@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -242,7 +243,7 @@ fun ShortsItem(
         )
 
         Row {
-            Image(painter = painterResource(id = R.drawable.ic_star), contentDescription = "star")
+            Image(painter = painterResource(id = R.drawable.ic_red_star), contentDescription = "star")
 
             CustomText(
                 text = starCount.toString(),
@@ -383,7 +384,7 @@ fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridStat
         state = gridState,
         contentPadding = PaddingValues(horizontal = 2.dp, vertical = 20.dp)
     ) {
-        items(items) { item ->
+        itemsIndexed(items) { index, item ->
             ShortsItem(
                 imageUrl = item.thumbnailUrl,
                 title = item.title,
@@ -393,7 +394,7 @@ fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridStat
                 onClick = {
                     viewModel.setVideoList(items)
                     viewModel.setCafeteriaId(cafeteriaId)
-                    navController.navigate(NavRoutes.StoreShortsScreen.route)
+                    navController.navigate(NavRoutes.StoreShortsScreen.createRoute(index))
                 },
                 viewCount = item.viewCount
             )
