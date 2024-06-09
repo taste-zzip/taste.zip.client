@@ -75,6 +75,7 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: (Long) -> Unit) 
     var isInitialPositionSet by remember { mutableStateOf(false) }
     val bookmarkList by viewModel.bookmarkList.collectAsState()
     val customIcon = OverlayImage.fromResource(R.drawable.ic_bookmarked)
+    val customLocationIcon = OverlayImage.fromResource(R.drawable.ic_location_filled_main_stroke_black)
 
     LaunchedEffect(Unit) {
         if (!isInitialPositionSet) {
@@ -128,7 +129,8 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: (Long) -> Unit) 
                     onClick = {
                         onMarkerClick(id)
                         true
-                    }
+                    },
+                    icon = customLocationIcon
                 )
             }
 
