@@ -31,7 +31,7 @@ fun ShortsTapScreen(
         Video(
             id = it.video.id,
             platform = it.video.platform,
-            starAverage = 0,
+            starAverage = 0.0,
             status = it.video.status,
             thumbnailUrl = it.youtubeVideo.thumbnail,
             title = it.youtubeVideo.title,
