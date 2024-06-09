@@ -143,9 +143,13 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
             BottomSheetLayout(isShorts = isShorts, navController = navController)
         }
 
-        composable(NavRoutes.StoreShortsScreen.route) {
+        composable(
+            "${ NavRoutes.StoreShortsScreen.route }/{index}",
+            arguments = listOf(navArgument("index") { type = NavType.IntType })
+        ) {backStackEntry ->
+            val index = backStackEntry.arguments?.getInt("index") ?: 0
             LaunchedEffect(Unit) { bottomBarState.value = false }
-            ShortsScreen(lifecycleOwner = LocalLifecycleOwner.current)
+            ShortsScreen(lifecycleOwner = LocalLifecycleOwner.current, index = index)
         }
 
         composable(NavRoutes.ShortsScreen.route) {

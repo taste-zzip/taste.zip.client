@@ -1,6 +1,5 @@
 package com.example.tastezzip.ui.screens.navermap.commet
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,10 +55,7 @@ fun CafeteriaCommentScreen(viewModel: BottomSheetViewModel = hiltViewModel(), ca
     val commentList by viewModel.commentList.collectAsState()
     val createComment = { id: Long, content: String ->
         viewModel.createComment(id, content)
-        viewModel.getCafeteriaComment(id)
     }
-
-    Log.e("댓글 페이지", cafeteriaDetail.toString())
 
     CommentScreen(cafeteriaDetail = cafeteriaDetail, commentList = commentList, createComment)
 }

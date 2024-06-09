@@ -5,14 +5,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tastezzip.data.repository.CafeteriaRepository
 import com.example.tastezzip.data.repository.VideoRepository
 import com.example.tastezzip.model.enums.LikeType
 import com.example.tastezzip.model.request.AddLikeVideoRequestVo
-import com.example.tastezzip.model.request.BookmarkCafeteriaRequestVo
-import com.example.tastezzip.model.request.DeleteLikeVideoRequestVo
-import com.example.tastezzip.repository.VideoRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,10 +27,11 @@ class ShortsViewModel @Inject constructor(
     val pageStateFlow = _pageStateFlow.asStateFlow()
     val likeState: StateFlow<Boolean> = _likeStateFlow.asStateFlow()
 
-    fun updatePageCount(videoSize: Int) {
-        viewModelScope.launch(Dispatchers.Main) {
-            _pageStateFlow.update { PagerState(0, 0F) { videoSize } }
-            Log.e("anjrk answpdi", _pageStateFlow.value.pageCount.toString())
+    fun updatePagerState(videoSize: Int, index: Int) {
+        viewModelScope.launch {
+            _pageStateFlow.update { currentState ->
+                PagerState(currentPage = index, currentPageOffsetFraction = currentState.currentPageOffsetFraction) { videoSize }
+            }
         }
     }
 
@@ -45,12 +41,17 @@ class ShortsViewModel @Inject constructor(
                 videoRepository.deleteLikeVideo(videoId)
                 _likeStateFlow.update { false }
             } else {
-                videoRepository.addLikeVideo(AddLikeVideoRequestVo(videoId))
+                videoRepository.addLikeVideo(AddLikeVideoRequestVo(videoId = videoId, type = LikeType.LIKE, score = null))
                 _likeStateFlow.update { true }
             }
 
         }
     }
 
+    fun createVideoRating(videoId: Long, review: Double) {
+        viewModelScope.launch {
+            videoRepository.addLikeVideo(request = AddLikeVideoRequestVo(videoId = videoId, type = LikeType.STAR, score = review))
+        }
+    }
 }
 
