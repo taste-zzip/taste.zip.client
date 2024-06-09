@@ -204,7 +204,7 @@ fun YoutubeScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 50.dp)
+                .padding(bottom = 70.dp)
         ) {
             IconButton(
                 onClick = {
