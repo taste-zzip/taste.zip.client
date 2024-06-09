@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +54,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.tastezzip.R
@@ -77,6 +80,8 @@ fun BottomSheetLayout(
     navController: NavController
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
     val isLoading by bottomSheetViewModel.isLoading.collectAsState(initial = false)
     val cafeteriaDetail by bottomSheetViewModel.cafeteriaDetail.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -93,6 +98,17 @@ fun BottomSheetLayout(
         }
     }
     val goToCommentEvent = bottomSheetViewModel.goToCafeteriaCommentEvent.collectAsState(initial = false).value
+    
+    LaunchedEffect(lifecycleState) {
+        if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
+            when(lifecycleState) {
+                Lifecycle.State.RESUMED -> {
+                    bottomSheetViewModel.getCafeteriaDetail(cafeteriaDetail.id)
+                }
+                else -> {}
+            }
+        }
+    }
 
     LaunchedEffect(goToCommentEvent) {
         if (goToCommentEvent) {
