@@ -76,8 +76,6 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: (Long) -> Unit) 
     val bookmarkList by viewModel.bookmarkList.collectAsState()
     val customIcon = OverlayImage.fromResource(R.drawable.ic_bookmarked)
 
-
-
     LaunchedEffect(Unit) {
         if (!isInitialPositionSet) {
             initUserPosition(context, fusedLocationClient, viewModel)
@@ -234,7 +232,7 @@ fun initUserPosition(
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 if (location != null) {
-                    viewModel.updateUserLocation(location)
+                    viewModel.initUserLocation(37.56300460476657, 126.92152333229693)
                 }
             }
             .addOnFailureListener { e ->
