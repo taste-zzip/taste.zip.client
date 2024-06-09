@@ -209,7 +209,7 @@ fun ShortsItem(
     imageUrl: String,
     title: String,
     id: Long,
-    starCount: Int,
+    starCount: Double,
     trophyCount: Int,
     onClick: () -> Unit,
     viewCount: Int
@@ -415,13 +415,5 @@ fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridStat
                 viewCount = item.viewCount
             )
         }
-    }
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun Preview() {
-    MainActivityTheme {
-        ShortsItem(imageUrl = "", title = "임시 제목", id = 1, starCount = 4, trophyCount = 5, onClick = {}, viewCount = 100)
     }
 }
