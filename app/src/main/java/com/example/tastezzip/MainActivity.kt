@@ -48,6 +48,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.tastezzip.navigation.NavBarItems
+import com.example.tastezzip.ui.screens.foodWc.FoodWorldCup
 import com.example.tastezzip.ui.screens.mypage.BookmarkCafeteria
 import com.example.tastezzip.ui.screens.mypage.MyPageScreen
 import com.example.tastezzip.ui.screens.navermap.BottomSheetLayout
@@ -184,6 +185,11 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
             val id = backStackEntry.arguments?.getLong("id") ?: 0L
             LaunchedEffect(key1 = Unit) { bottomBarState.value = true }
             CafeteriaCommentScreen(cafeteriaId = id)
+        }
+
+        composable(NavRoutes.FoodWorldCupScreen.route) {
+            LaunchedEffect(key1 = Unit) { bottomBarState.value = true }
+            FoodWorldCup()
         }
     }
 }

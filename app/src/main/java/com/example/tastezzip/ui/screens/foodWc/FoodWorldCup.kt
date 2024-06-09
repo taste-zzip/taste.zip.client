@@ -62,7 +62,7 @@ fun FoodWcInitScreen() {
                 Spacer(modifier = Modifier.width(20.dp))
                 CustomText(text = stringResource(R.string.food_wc), fontSize = 25.sp, font = Font(R.font.pretendard_bold), color = Color.Black)
             }
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             CustomText(text = stringResource(id = R.string.food_wc_sub_title), fontSize = 15.sp, font = Font(R.font.pretendard_regular), color = Color.Black)
             Spacer(modifier = Modifier.weight(1f))
             Button(
