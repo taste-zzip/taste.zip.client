@@ -11,6 +11,7 @@
 
     <!--  word  -->
     <string name="comment">댓글</string>
+    <string name="review">평가하기</string>
 
     <!--  RecommendRestaurant  -->
     <string name="recommend_title">연남동 추천 식당</string>
@@ -20,4 +21,8 @@
     <string name="my_page_bookmark_cafeteria">내가 좋아하는 맛집</string>
     <string name="my_page_withdrawn">회원탈퇴</string>
     <string name="my_page_delete_account">맛.zip에서 탈퇴하시겠습니까?</string>
+
+    <!--  Shorts  -->
+    <string name="shorts_rating_dialog_title">영상을 평가해주세요</string>
+    <string name="shorts_rating_dialog_content">해당 영상이 유익 했는지, 신뢰할 만한지, 거짓은 없었는지 확인해주세요. 객관적인 평가가 발전된 맛.zip을 만들어갑니다.</string>
 </resources>

@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +54,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.tastezzip.R
@@ -76,6 +80,8 @@ fun BottomSheetLayout(
     navController: NavController
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
     val isLoading by bottomSheetViewModel.isLoading.collectAsState(initial = false)
     val cafeteriaDetail by bottomSheetViewModel.cafeteriaDetail.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -92,6 +98,17 @@ fun BottomSheetLayout(
         }
     }
     val goToCommentEvent = bottomSheetViewModel.goToCafeteriaCommentEvent.collectAsState(initial = false).value
+    
+    LaunchedEffect(lifecycleState) {
+        if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
+            when(lifecycleState) {
+                Lifecycle.State.RESUMED -> {
+                    bottomSheetViewModel.getCafeteriaDetail(cafeteriaDetail.id)
+                }
+                else -> {}
+            }
+        }
+    }
 
     LaunchedEffect(goToCommentEvent) {
         if (goToCommentEvent) {
@@ -242,7 +259,7 @@ fun ShortsItem(
         )
 
         Row {
-            Image(painter = painterResource(id = R.drawable.ic_star), contentDescription = "star")
+            Image(painter = painterResource(id = R.drawable.ic_red_star), contentDescription = "star")
 
             CustomText(
                 text = starCount.toString(),
@@ -383,7 +400,7 @@ fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridStat
         state = gridState,
         contentPadding = PaddingValues(horizontal = 2.dp, vertical = 20.dp)
     ) {
-        items(items) { item ->
+        itemsIndexed(items) { index, item ->
             ShortsItem(
                 imageUrl = item.thumbnailUrl,
                 title = item.title,
@@ -393,7 +410,7 @@ fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridStat
                 onClick = {
                     viewModel.setVideoList(items)
                     viewModel.setCafeteriaId(cafeteriaId)
-                    navController.navigate(NavRoutes.StoreShortsScreen.route)
+                    navController.navigate(NavRoutes.StoreShortsScreen.createRoute(index))
                 },
                 viewCount = item.viewCount
             )
