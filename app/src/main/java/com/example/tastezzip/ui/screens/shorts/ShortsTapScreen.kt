@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
@@ -18,6 +20,13 @@ fun ShortsTapScreen(
     lifecycleOwner: LifecycleOwner
 ) {
     val videoList by viewModel.videoList.collectAsState()
+    val showRatingDialog = remember { mutableStateOf(false) }
+    val selectedRating = remember { mutableStateOf(0) }
+    var videoId: Long = -1L
+    val onClickBtnReview = { id: Long ->
+        videoId = id
+        showRatingDialog.value = true
+    }
     val newList = videoList.map {
         Video(
             id = it.video.id,
@@ -33,7 +42,7 @@ fun ShortsTapScreen(
             accountVideoMapping = it.accountVideoMapping
         )
     }
-    shortsViewModel.updatePageCount(videoList.size)
+    shortsViewModel.updatePagerState(videoList.size, 0)
 
-    YoutubeShortsPager(videoList = newList, modifier = Modifier.fillMaxSize(), shortsViewModel, lifecycleOwner)
+    YoutubeShortsPager(videoList = newList, modifier = Modifier.fillMaxSize(), shortsViewModel, lifecycleOwner, onClickBtnReview = onClickBtnReview)
 }
