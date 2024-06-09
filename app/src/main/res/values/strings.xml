@@ -25,4 +25,8 @@
     <!--  Shorts  -->
     <string name="shorts_rating_dialog_title">영상을 평가해주세요</string>
     <string name="shorts_rating_dialog_content">해당 영상이 유익 했는지, 신뢰할 만한지, 거짓은 없었는지 확인해주세요. 객관적인 평가가 발전된 맛.zip을 만들어갑니다.</string>
+
+    <!--  FoodWc  -->
+    <string name="food_wc_sub_title">취향에 맞는 음식을 골라보세요!\n우승한 음식이 맛집 추천에 도움을 줍니다</string>
+    <string name="food_wc_start">월드컵 시작하기</string>
 </resources>
