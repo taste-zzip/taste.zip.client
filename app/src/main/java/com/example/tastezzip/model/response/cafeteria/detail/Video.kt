@@ -8,7 +8,7 @@ data class Video(
     @SerializedName("platform")
     val platform: String = "",
     @SerializedName("starAverage")
-    val starAverage: Int = 0,
+    val starAverage: Double = 0.0,
     @SerializedName("status")
     val status: String = "",
     @SerializedName("thumbnailUrl")

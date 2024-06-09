@@ -91,7 +91,7 @@ fun BottomSheetLayout(
         skipHalfExpanded = false
     )
     val showBottomSheet = {
-        if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden && cafeteriaDetail.id != -1L) {
             coroutineScope.launch {
                 sheetState.show()
             }
@@ -117,15 +117,14 @@ fun BottomSheetLayout(
         }
     }
 
-    LaunchedEffect(key1 = cafeteriaDetail) {
-        if (cafeteriaDetail.id == -1L) return@LaunchedEffect
-        showBottomSheet()
-    }
-
     LaunchedEffect(key1 = true) {
         bottomSheetViewModel.bookmarkSuccessEvent.collect { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    LaunchedEffect(key1 = cafeteriaDetail) {
+        if (cafeteriaDetail.id != -1L) showBottomSheet()
     }
 
     ModalBottomSheetLayout(
@@ -163,7 +162,18 @@ fun BottomSheetLayout(
 
                     Spacer(modifier = Modifier.height(5.dp))
 
-                    CustomText(text = "주소 " + cafeteriaDetail.address, fontSize = 12.sp, font = Font(R.font.pretendard_medium), color = Color.Black)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(painter = painterResource(id = R.drawable.ic_location), contentDescription = "", tint = Color.Gray)
+
+                        Spacer(modifier = Modifier.width(5.dp))
+
+                        CustomText(
+                            text = cafeteriaDetail.address,
+                            fontSize = 12.sp,
+                            font = Font(R.font.pretendard_medium),
+                            color = Color.Black
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
@@ -199,6 +209,7 @@ fun BottomSheetLayout(
             viewModel = naverMapviewModel,
             onMarkerClick = {
                 bottomSheetViewModel.getCafeteriaDetail(it)
+                showBottomSheet()
             }
         )
     }
@@ -209,7 +220,7 @@ fun ShortsItem(
     imageUrl: String,
     title: String,
     id: Long,
-    starCount: Int,
+    starCount: Double,
     trophyCount: Int,
     onClick: () -> Unit,
     viewCount: Int
@@ -415,13 +426,5 @@ fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridStat
                 viewCount = item.viewCount
             )
         }
-    }
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun Preview() {
-    MainActivityTheme {
-        ShortsItem(imageUrl = "", title = "임시 제목", id = 1, starCount = 4, trophyCount = 5, onClick = {}, viewCount = 100)
     }
 }

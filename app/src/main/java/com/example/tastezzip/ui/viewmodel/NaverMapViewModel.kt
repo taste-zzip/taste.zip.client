@@ -35,8 +35,8 @@ class NaverMapViewModel @Inject constructor(
 ): ViewModel() {
     private val _searchData: MutableStateFlow<List<Content>> = MutableStateFlow(emptyList())
     private val _searchResult = MutableStateFlow<Result<List<LatLng>>>(Result.success(emptyList()))
-    private val _latitude : MutableStateFlow<Double> = MutableStateFlow(0.0)
-    private val _longitude : MutableStateFlow<Double> = MutableStateFlow(0.0)
+    private val _latitude : MutableStateFlow<Double> = MutableStateFlow( 0.0)
+    private val _longitude : MutableStateFlow<Double> = MutableStateFlow(0.0 )
     private val _newBookmarkList: MutableStateFlow<List<LikedCafeteria>> = MutableStateFlow(emptyList())
     private val _searchKeyword: MutableStateFlow<String> = MutableStateFlow("")
     private val _bookmarkList: MutableStateFlow<List<Cafeteria>> = MutableStateFlow(emptyList())
@@ -93,6 +93,17 @@ class NaverMapViewModel @Inject constructor(
             }
             _longitude.update {
                 location.longitude
+            }
+        }
+    }
+
+    fun initUserLocation(lat: Double, long: Double) {
+        viewModelScope.launch(Dispatchers.Main) {
+            _latitude.update {
+                lat
+            }
+            _longitude.update {
+                long
             }
         }
     }
