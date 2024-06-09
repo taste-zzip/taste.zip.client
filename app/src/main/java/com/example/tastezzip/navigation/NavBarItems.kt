@@ -7,7 +7,7 @@ object NavBarItems {
         BarItem(
             title = "음식 월드컵",
             icon = R.drawable.ic_food_wc,
-            route = ""
+            route = "foodWc"
         ),
         BarItem(
             title = "추천",
