@@ -248,5 +248,22 @@ fun YoutubeScreen(
                 CustomText(text = stringResource(id = R.string.review), fontSize = 12.sp, font = Font(R.font.pretendard_bold), color = Color.White)
             }
         }
+
+        Column(
+            modifier = Modifier.align(Alignment.BottomStart)
+        ) {
+            CustomText(
+                text = item.title,
+                fontSize = 20.sp,
+                font = Font(R.font.pretendard_bold),
+                color = Color.Black
+            )
+            CustomText(
+                text = item.title,
+                fontSize = 20.sp,
+                font = Font(R.font.pretendard_bold),
+                color = Color.Black
+            )
+        }
     }
 }

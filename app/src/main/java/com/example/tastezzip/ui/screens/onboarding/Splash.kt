@@ -55,7 +55,7 @@ fun Splash(navController: NavHostController, loginViewModel: LoginViewModel = hi
             )
         }
         
-        LaunchedEffect(key1 = true) {
+        LaunchedEffect(Unit) {
             delay(2000)
             if (loginViewModel.hasAccessToken()) {
                 navController.navigate(NavRoutes.NaverMapScreen.route) {

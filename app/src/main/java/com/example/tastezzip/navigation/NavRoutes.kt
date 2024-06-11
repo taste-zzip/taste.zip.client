@@ -19,4 +19,7 @@ sealed class NavRoutes(val route: String) {
             return "${CafeteriaCommentScreen.route}/$id"
         }
     }
+
+    data object FoodWorldCupScreen: NavRoutes("foodWc")
+    data object FoodWorldCupGame: NavRoutes("foodWcGame")
 }
