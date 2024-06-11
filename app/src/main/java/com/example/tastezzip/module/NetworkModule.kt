@@ -23,7 +23,7 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
         val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val refreshToken = sharedPreferences.getString("refreshToken", "")
+        val refreshToken = sharedPreferences.getString("refreshToken", null)
         val httpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
         val headerInterceptor = Interceptor{

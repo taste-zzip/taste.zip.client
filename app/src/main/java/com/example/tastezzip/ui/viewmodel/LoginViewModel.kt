@@ -91,10 +91,10 @@ class LoginViewModel @Inject constructor(
 
     private fun getAccessToken() {
         refreshToken = sharedPreferences.getString("refreshToken", null)
-        Log.e("accessToken", refreshToken.toString())
+        Log.e("refreshToken", refreshToken.toString())
     }
 
     fun hasAccessToken(): Boolean {
-        return !refreshToken.isNullOrEmpty()
+        return refreshToken != null
     }
 }
