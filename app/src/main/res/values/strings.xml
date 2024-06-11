@@ -29,4 +29,5 @@
     <!--  FoodWc  -->
     <string name="food_wc_sub_title">취향에 맞는 음식을 골라보세요!\n우승한 음식이 맛집 추천에 도움을 줍니다</string>
     <string name="food_wc_start">월드컵 시작하기</string>
+    <string name="food_wc_winner_title">%s 우승!</string>
 </resources>

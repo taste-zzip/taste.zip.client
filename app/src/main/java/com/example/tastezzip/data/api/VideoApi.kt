@@ -4,6 +4,7 @@ import com.example.tastezzip.model.enums.LikeType
 import com.example.tastezzip.model.request.AddLikeVideoRequestVo
 import com.example.tastezzip.model.request.DeleteLikeVideoRequestVo
 import com.example.tastezzip.model.response.shorts.ShortsFeedResponse
+import com.example.tastezzip.model.response.worldcup.WorldCupListResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -19,4 +20,7 @@ interface VideoApi {
 
     @GET(Endpoints.Video.FEED)
     suspend fun getFeedList(@Query("size") size: Long): ShortsFeedResponse
+
+    @GET(Endpoints.Video.WORLDCUP)
+    suspend fun getWorldCupList(): WorldCupListResponse
 }

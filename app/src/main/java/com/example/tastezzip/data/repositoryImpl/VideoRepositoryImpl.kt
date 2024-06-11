@@ -6,6 +6,7 @@ import com.example.tastezzip.model.enums.LikeType
 import com.example.tastezzip.model.request.AddLikeVideoRequestVo
 import com.example.tastezzip.model.request.DeleteLikeVideoRequestVo
 import com.example.tastezzip.model.response.shorts.ShortsFeedResponse
+import com.example.tastezzip.model.response.worldcup.WorldCupListResponse
 import javax.inject.Inject
 
 class VideoRepositoryImpl @Inject constructor(
@@ -21,5 +22,9 @@ class VideoRepositoryImpl @Inject constructor(
 
     override suspend fun getFeedList(request: Long): ShortsFeedResponse {
         return videoApi.getFeedList(request)
+    }
+
+    override suspend fun getWorldCupList(): WorldCupListResponse {
+        return videoApi.getWorldCupList()
     }
 }

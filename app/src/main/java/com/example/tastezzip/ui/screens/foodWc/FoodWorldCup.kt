@@ -32,14 +32,18 @@ import com.example.tastezzip.ui.theme.MainActivityTheme
 import com.example.tastezzip.ui.viewmodel.FoodWorldCupViewModel
 
 @Composable
-fun FoodWorldCup() {
+fun FoodWorldCup(
+    onClickBtnStartWorldCup: () -> Unit
+) {
     val viewModel: FoodWorldCupViewModel = hiltViewModel()
 
-    FoodWcInitScreen()
+    FoodWcInitScreen(onClickBtnStartWorldCup)
 }
 
 @Composable
-fun FoodWcInitScreen() {
+fun FoodWcInitScreen(
+    onClickBtnStartWorldCup: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -67,7 +71,7 @@ fun FoodWcInitScreen() {
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp),
-                onClick = { /*TODO*/ },
+                onClick = { onClickBtnStartWorldCup() },
                 shape = RoundedCornerShape(
                     10.dp
                 ),
@@ -86,6 +90,6 @@ fun FoodWcInitScreen() {
 @Composable
 fun PreviewFoodWc() {
     MainActivityTheme {
-        FoodWcInitScreen()
+        FoodWcInitScreen({})
     }
 }

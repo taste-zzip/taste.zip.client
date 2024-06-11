@@ -12,4 +12,5 @@
     <color name="gray">#cccccc</color>
     <color name="background">#FAF8FF</color>
     <color name="food_wc">#ECB476</color>
+    <color name="yellow">#FFD600</color>
 </resources>
