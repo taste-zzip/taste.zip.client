@@ -21,4 +21,5 @@ sealed class NavRoutes(val route: String) {
     }
 
     data object FoodWorldCupScreen: NavRoutes("foodWc")
+    data object FoodWorldCupGame: NavRoutes("foodWcGame")
 }

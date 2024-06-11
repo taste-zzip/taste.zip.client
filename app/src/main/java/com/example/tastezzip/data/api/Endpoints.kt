@@ -25,6 +25,7 @@ object Endpoints {
         private const val VIDEO = "$API/video"
         const val ACCOUNT = "$VIDEO/account"
         const val FEED = "$VIDEO/feed"
+        const val WORLDCUP = "$VIDEO/worldcup"
     }
 
     object Youtube{

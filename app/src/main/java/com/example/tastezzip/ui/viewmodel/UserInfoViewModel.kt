@@ -38,7 +38,7 @@ class UserInfoViewModel @Inject constructor(
             Log.e("회원가입 결과", response.toString())
             sharedPreferences.edit().putString("accessToken", response.accessToken).apply()
             sharedPreferences.edit().putString("refreshToken", response.refreshToken).apply()
-            Log.e("sharedPrefs", sharedPreferences.getString("accessToken", "").toString())
+            Log.e("sharedPrefs", sharedPreferences.getString("refreshToken", null).toString())
             _registrationEventFlow.emit(true)
         }
     }
