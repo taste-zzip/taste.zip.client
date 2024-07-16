@@ -60,7 +60,7 @@ fun FoodWcInitScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_food),
                     contentDescription = "",
-                    tint = Color.Unspecified,
+                    tint = colorResource(id = R.color.shorts_blue),
                     modifier = Modifier.size(45.dp)
                 )
                 Spacer(modifier = Modifier.width(20.dp))
@@ -70,13 +70,15 @@ fun FoodWcInitScreen(
             CustomText(text = stringResource(id = R.string.food_wc_sub_title), fontSize = 15.sp, font = Font(R.font.pretendard_regular), color = Color.Black)
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp),
                 onClick = { onClickBtnStartWorldCup() },
                 shape = RoundedCornerShape(
                     10.dp
                 ),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.food_wc)
+                    containerColor = colorResource(id = R.color.shorts_blue)
                 )
             ) {
                 CustomText(text = stringResource(id = R.string.food_wc_start), fontSize = 17.sp, font = Font(R.font.pretendard_semi_bold), color = Color.White)
