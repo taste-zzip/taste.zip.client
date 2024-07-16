@@ -19,6 +19,7 @@ object Endpoints {
         const val BOOKMARK = "$CAFETERIA/account"
         const val LIKE = "$CAFETERIA/like"
         const val COMMENT = "$CAFETERIAID/comment"
+        const val RECOMMENDATION = "$CAFETERIA/recommendations"
     }
 
     object Video {

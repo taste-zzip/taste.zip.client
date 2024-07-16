@@ -1,24 +1,44 @@
 package com.example.tastezzip.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.tastezzip.model.vo.RecommendItemVo
-import com.example.tastezzip.model.vo.VideoItemVo
+import androidx.lifecycle.viewModelScope
+import coil.network.HttpException
+import com.example.tastezzip.application.LoadingManager
+import com.example.tastezzip.data.repository.CafeteriaRepository
+import com.example.tastezzip.model.response.cafeteria.recommendation.RecommendResponseItem
+import com.example.tastezzip.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RecommendRestaurantViewModel @Inject constructor(): ViewModel() {
-    private val _recommendListStateFlow: MutableStateFlow<List<RecommendItemVo>> = MutableStateFlow(
-        listOf(
-            RecommendItemVo("더진국 중앙대점", "국밥전문점", 239, 2319, listOf(VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"), VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"), VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"), VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"), VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"), VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"), VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"))),
-            RecommendItemVo("더진국 중앙대점", "국밥전문점", 239, 2319, listOf(VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"))),
-            RecommendItemVo("더진국 중앙대점", "국밥전문점", 239, 2319, listOf(VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"))),
-            RecommendItemVo("더진국 중앙대점", "국밥전문점", 239, 2319, listOf(VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"))),
-            RecommendItemVo("더진국 중앙대점", "국밥전문점", 239, 2319, listOf(VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999"))),
-            RecommendItemVo("더진국 중앙대점", "국밥전문점", 239, 2319, listOf(VideoItemVo(videoPk = "3MKc6RXIhRw", thumbnailUrl = "https://oasisproduct.cdn.ntruss.com/78096/thumb/999")))
-        )
-    )
+class RecommendRestaurantViewModel @Inject constructor(
+    private val cafeteriaRepository: CafeteriaRepository,
+    loadingManager: LoadingManager
+): BaseViewModel(loadingManager) {
+    private val _recommendListStateFlow: MutableStateFlow<List<RecommendResponseItem>> = MutableStateFlow(emptyList())
     val recommendList = _recommendListStateFlow.asStateFlow()
+
+    init {
+        getRecommendationList()
+    }
+
+    fun getRecommendationList() {
+        viewModelScope.launch {
+            setLoading(true)
+            try {
+                val response = cafeteriaRepository.getRecommendationList()
+                Log.e("recommendationList", response.toString())
+                _recommendListStateFlow.update { response }
+            } catch (e: Exception) {
+
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
 }

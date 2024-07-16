@@ -45,11 +45,17 @@ import com.example.tastezzip.ui.viewmodel.MyPageViewModel
 @Composable
 fun MyPageScreen(
     onClickBookmarkCafeteria: () -> Unit,
+    goToLogin: () -> Unit
 ) {
     val viewModel: MyPageViewModel = hiltViewModel()
     val nickname by viewModel.nickname.collectAsState()
     val bio by viewModel.bio.collectAsState()
     val showDeleteDialog = remember { mutableStateOf(false) }
+    val goToLoginEvent = viewModel.goToLoginSharedFlow.collectAsState(initial = false)
+
+    if (goToLoginEvent.value) {
+        goToLogin()
+    }
 
     if (showDeleteDialog.value) {
         AlertDialog(
