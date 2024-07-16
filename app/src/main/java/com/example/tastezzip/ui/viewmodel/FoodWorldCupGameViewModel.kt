@@ -4,8 +4,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tastezzip.application.LoadingManager
 import com.example.tastezzip.data.repository.VideoRepository
 import com.example.tastezzip.model.response.worldcup.WorldCupListResponseItem
+import com.example.tastezzip.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,8 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 @OptIn(ExperimentalFoundationApi::class)
 class FoodWorldCupGameViewModel @Inject constructor(
-    private val videoRepository: VideoRepository
-): ViewModel() {
+    private val videoRepository: VideoRepository,
+    loadingManager: LoadingManager
+): BaseViewModel(loadingManager) {
     private val _pagerState: MutableStateFlow<PagerState> = MutableStateFlow(PagerState(currentPage = 0, currentPageOffsetFraction = 0.0f) { 2 })
     private val _videoList: MutableStateFlow<List<WorldCupListResponseItem>> = MutableStateFlow(emptyList())
     private val _currentMatch: MutableStateFlow<Pair<Int, Int>> = MutableStateFlow(0 to 1)
@@ -39,8 +42,15 @@ class FoodWorldCupGameViewModel @Inject constructor(
 
     private fun getWorldCupList() {
         viewModelScope.launch(Dispatchers.Main) {
-            val response = videoRepository.getWorldCupList()
-            _videoList.update { response }
+            setLoading(true)
+            try {
+                val response = videoRepository.getWorldCupList()
+                _videoList.update { response }
+            } catch (e: Exception) {
+
+            } finally {
+                setLoading(false)
+            }
         }
     }
 
