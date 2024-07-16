@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.dp
@@ -46,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import com.example.tastezzip.R
 import com.example.tastezzip.model.response.worldcup.WorldCupListResponseItem
+import com.example.tastezzip.repository.VideoRepositoryImpl
 import com.example.tastezzip.ui.component.CustomText
 import com.example.tastezzip.ui.viewmodel.FoodWorldCupGameViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
@@ -55,7 +58,9 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FoodWorldCupGame() {
+fun FoodWorldCupGame(
+    onClickBtnGoToHome: () -> Unit
+) {
     val viewModel: FoodWorldCupGameViewModel = hiltViewModel()
     val videoList by viewModel.videoList.collectAsState()
     val currentMatch by viewModel.currentMatch.collectAsState()
@@ -87,7 +92,9 @@ fun FoodWorldCupGame() {
             },
             confirmButton = {
                 Button(
-                    onClick = { showWinnerDialog.value = false },
+                    onClick = {
+                        showWinnerDialog.value = false
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                 ) {
@@ -96,20 +103,24 @@ fun FoodWorldCupGame() {
             },
             dismissButton = {
                 Button(
-                    onClick = { showWinnerDialog.value = false },
+                    onClick = {
+                        showWinnerDialog.value = false
+                        onClickBtnGoToHome()
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
 
                 ) {
-                    CustomText(text = "영상 더보기", fontSize = 14.sp, font = Font(R.font.pretendard_regular), color = Color.Black)
+                    CustomText(text = "홈으로", fontSize = 14.sp, font = Font(R.font.pretendard_regular), color = Color.Black)
                 }
             },
             text = {
                 Column(
                     horizontalAlignment = Alignment.Start
                 ) {
-                    CustomText(text = winnerItem.cafeteriaInfo.address, fontSize = 14.sp, font = Font(R.font.pretendard_regular), color = Color.Black)
+                    CustomText(text = winnerItem.cafeteriaInfo.streetAddress, fontSize = 14.sp, font = Font(R.font.pretendard_regular), color = Color.Black)
                     CustomText(text = "리뷰영상 ${winnerItem.cafeteriaInfo.videoCnt}개", fontSize = 14.sp, font = Font(R.font.pretendard_regular), color = Color.Black)
+                    CustomText(text = "댓글 ${winnerItem.cafeteriaInfo.commentCnt}개", fontSize = 14.sp, font = Font(R.font.pretendard_regular), color = Color.Black)
                 }
             },
         )
@@ -206,7 +217,7 @@ fun WorldCupShortsScreen(
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     drawCircle(
-                        color = Color(ContextCompat.getColor(ctx, R.color.yellow)),
+                        color = Color(ContextCompat.getColor(ctx, R.color.shorts_yellow)),
                         radius = 48.dp.toPx() / 2
                     )
                 }
@@ -219,6 +230,50 @@ fun WorldCupShortsScreen(
                 }
             ) {
                 Icon(painter = painterResource(id = R.drawable.ic_btn_select_wc), contentDescription = "", tint = Color.Unspecified)
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(bottom = 70.dp, start = 15.dp)
+        ) {
+            CustomText(
+                text = item.cafeteriaInfo.name,
+                fontSize = 20.sp,
+                font = Font(R.font.pretendard_bold),
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            CustomText(
+                text = VideoRepositoryImpl.cafeteriaAddress,
+                fontSize = 14.sp,
+                font = Font(R.font.pretendard_bold),
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = "", tint = colorResource(id = R.color.shorts_blue))
+                Spacer(modifier = Modifier.width(5.dp))
+                CustomText(
+                    text = "리뷰 영상 ${item.cafeteriaInfo.videoCnt}개",
+                    fontSize = 12.sp,
+                    font = Font(R.font.pretendard_medium),
+                    color = Color.White
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_red_star), contentDescription = "", tint = Color.Unspecified)
+                Spacer(modifier = Modifier.width(5.dp))
+                CustomText(text = item.starAverage.toString(), fontSize = 16.sp, font = Font(R.font.pretendard_regular), color = Color.White)
+                Spacer(modifier = Modifier.width(10.dp))
+                Icon(painter = painterResource(id = R.drawable.ic_trophy), contentDescription = "", tint = Color.Unspecified)
+                Spacer(modifier = Modifier.width(5.dp))
+                CustomText(text = item.trophyCount.toString(), fontSize = 16.sp, font = Font(R.font.pretendard_regular), color = Color.White)
             }
         }
     }
