@@ -27,5 +27,5 @@ data class WorldCupListResponseItem(
     @SerializedName("viewCount")
     val viewCount: Int = 0,
     @SerializedName("cafeteriaResponse")
-    val cafeteriaInfo: CafeteriaDetailResponse = CafeteriaDetailResponse()
+    val cafeteriaInfo: CafeteriaResponse = CafeteriaResponse()
 )
