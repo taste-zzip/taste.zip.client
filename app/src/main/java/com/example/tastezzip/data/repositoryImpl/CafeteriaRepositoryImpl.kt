@@ -4,12 +4,15 @@ import com.example.tastezzip.data.api.CafeteriaApi
 import com.example.tastezzip.data.repository.CafeteriaRepository
 import com.example.tastezzip.model.request.BookmarkCafeteriaRequestVo
 import com.example.tastezzip.model.request.SearchCafeteriaRequest
+import com.example.tastezzip.model.request.bookmark.DeleteBookmarkRequestVo
 import com.example.tastezzip.model.request.comment.get.GetCommentRequestVo
 import com.example.tastezzip.model.request.comment.post.CreateCommentRequestVo
 import com.example.tastezzip.model.response.cafeteria.SearchCafeteriaResponse
 import com.example.tastezzip.model.response.cafeteria.bookmark.BookmarkListResponse
 import com.example.tastezzip.model.response.cafeteria.detail.CafeteriaDetailResponse
+import com.example.tastezzip.model.response.cafeteria.recommendation.RecommendResponseItem
 import com.example.tastezzip.model.response.comment.get.GetCommentResponse
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CafeteriaRepositoryImpl @Inject constructor(
@@ -40,5 +43,13 @@ class CafeteriaRepositoryImpl @Inject constructor(
 
     override suspend fun createComment(id: Long, request: CreateCommentRequestVo) {
         return cafeteriaApi.createComment(id = id, request = request)
+    }
+
+    override suspend fun getRecommendationList(): List<RecommendResponseItem> {
+        return cafeteriaApi.getRecommendationList()
+    }
+
+    override suspend fun deleteBookmark(requestVo: DeleteBookmarkRequestVo) {
+        return cafeteriaApi.deleteBookmark(cafeteriaId = requestVo.id, type = requestVo.type)
     }
 }
