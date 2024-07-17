@@ -8,6 +8,12 @@ https://github.com/user-attachments/assets/b3f90163-70bc-4e5a-a431-11bfb50fd902
 ### 맛집 상세 조회
 https://github.com/user-attachments/assets/3c56bcb6-bb1c-4a7c-99e7-c7fba1268d88
 
+### 맛집 쇼츠 좋아요 클릭 -> 지도 북마크 등록
+https://github.com/user-attachments/assets/fceb29f1-a904-45d7-9c6a-d7e9a8304e33
+
+https://github.com/user-attachments/assets/7408f2c9-ebd1-45a3-9234-a5b3beb1f134
+
+https://github.com/user-attachments/assets/bd3167f8-f41b-4c36-a241-279874eb6070
 
 # ⚒️ 기술 스택
 - Compose
