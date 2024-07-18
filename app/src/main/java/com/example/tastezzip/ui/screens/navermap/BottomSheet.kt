@@ -2,7 +2,6 @@ package com.example.tastezzip.ui.screens.navermap
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CornerSize
@@ -25,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -33,12 +30,11 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,25 +46,21 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.tastezzip.R
+import com.example.tastezzip.model.response.cafeteria.detail.CafeteriaDetailResponse
 import com.example.tastezzip.model.response.cafeteria.detail.Video
-import com.example.tastezzip.model.vo.VideoItemVo
 import com.example.tastezzip.navigation.NavRoutes
-import com.example.tastezzip.repository.VideoRepositoryImpl
 import com.example.tastezzip.ui.component.CustomIconButton
 import com.example.tastezzip.ui.component.CustomText
-import com.example.tastezzip.ui.theme.MainActivityTheme
 import com.example.tastezzip.ui.viewmodel.BottomSheetViewModel
 import com.example.tastezzip.ui.viewmodel.NaverMapViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -76,13 +68,11 @@ import kotlinx.coroutines.launch
 fun BottomSheetLayout(
     naverMapviewModel: NaverMapViewModel = hiltViewModel(),
     bottomSheetViewModel: BottomSheetViewModel = hiltViewModel(),
-    isShorts: MutableState<Boolean>,
     navController: NavController
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
-    val isLoading by bottomSheetViewModel.isLoading.collectAsState(initial = false)
     val cafeteriaDetail by bottomSheetViewModel.cafeteriaDetail.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
@@ -98,15 +88,24 @@ fun BottomSheetLayout(
         }
     }
     val goToCommentEvent = bottomSheetViewModel.goToCafeteriaCommentEvent.collectAsState(initial = false).value
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE || event == Lifecycle.Event.ON_STOP) {
+                coroutineScope.launch {
+                    sheetState.hide()
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     
     LaunchedEffect(lifecycleState) {
         if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
-            when(lifecycleState) {
-                Lifecycle.State.RESUMED -> {
-                    bottomSheetViewModel.getCafeteriaDetail(cafeteriaDetail.id)
-                }
-                else -> {}
-            }
+            bottomSheetViewModel.getCafeteriaDetail(cafeteriaDetail.id)
         }
     }
 
@@ -197,7 +196,7 @@ fun BottomSheetLayout(
                             )
                         }
                     } else {
-                        CustomGridLayout(items = cafeteriaDetail.videos, cellCount = 2, gridState = gridState, navController, viewModel = bottomSheetViewModel, cafeteriaId = cafeteriaDetail.id)
+                        CustomGridLayout(cellCount = 2, gridState = gridState, navController, viewModel = bottomSheetViewModel, cafeteriaDetail = cafeteriaDetail)
                     }
                 }
             }
@@ -405,7 +404,9 @@ fun FourEqualButtonsWithDividers(
 }
 
 @Composable
-fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridState, navController: NavController, viewModel: BottomSheetViewModel, cafeteriaId: Long) {
+fun CustomGridLayout(cellCount: Int, gridState: LazyGridState, navController: NavController, viewModel: BottomSheetViewModel, cafeteriaDetail: CafeteriaDetailResponse) {
+    val items = cafeteriaDetail.videos
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(cellCount),
         state = gridState,
@@ -420,7 +421,7 @@ fun CustomGridLayout(items: List<Video>, cellCount: Int, gridState: LazyGridStat
                 trophyCount = item.trophyCount,
                 onClick = {
                     viewModel.setVideoList(items)
-                    viewModel.setCafeteriaId(cafeteriaId)
+                    viewModel.setCafeteriaId(cafeteriaDetail.id)
                     navController.navigate(NavRoutes.StoreShortsScreen.createRoute(index))
                 },
                 viewCount = item.viewCount
