@@ -18,5 +18,7 @@ data class CafeteriaDetailResponse(
     @SerializedName("videoCnt")
     val videoCnt: Int = -1,
     @SerializedName("videos")
-    val videos: List<Video> = emptyList()
+    val videos: List<Video> = emptyList(),
+    @SerializedName("commentCnt")
+    val commentCnt: Int = 0
 )
