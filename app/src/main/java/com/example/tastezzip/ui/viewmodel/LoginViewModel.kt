@@ -30,7 +30,8 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val accountRepository: AccountRepository,
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
+    private val userInfo: UserInfo
 ): ViewModel() {
     private val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     private val _loginSuccess : MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -52,19 +53,23 @@ class LoginViewModel @Inject constructor(
             val authCode = account.serverAuthCode
             val name = account.givenName
             val email = account.email
+            val profileImage = account.photoUrl
 
             if (authCode != null) {
-                UserInfo.authCode = authCode
+                userInfo.authCode = authCode
+                if (profileImage != null) {
+                    userInfo.profileImage = profileImage
+                }
                 Log.e("토큰", authCode)
                 viewModelScope.launch {
-                    if (sharedPreferences.getString("accessToken", null) == null) {
+                    if (sharedPreferences.getString("refreshToken", null) == null) {
                         _loginEventFlow.emit(false)
                     } else {
                         val response = authRepository.login(request = LoginRequestVo(authCode))
                         Log.e("로그인 결과", response.toString())
                         sharedPreferences.edit().putString("accessToken", response.accessToken).apply()
                         sharedPreferences.edit().putString("refreshToken", response.refreshToken).apply()
-                        Log.e("sharedPrefs", sharedPreferences.getString("accessToken", "").toString())
+                        Log.e("sharedPrefs", sharedPreferences.getString("refreshToken", null).toString())
                         _loginEventFlow.emit(true)
                     }
                 }
@@ -79,9 +84,10 @@ class LoginViewModel @Inject constructor(
 
     fun signInWithGoogle(context: Context, launcher: ActivityResultLauncher<Intent>) {
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestServerAuthCode(GOOGLE_CLIENT_ID)
+            .requestServerAuthCode(GOOGLE_CLIENT_ID, true)
             .requestIdToken(GOOGLE_CLIENT_ID)
             .requestEmail()
+            .requestProfile()
             .requestScopes(Scope("https://www.googleapis.com/auth/youtube"))
             .build()
 
