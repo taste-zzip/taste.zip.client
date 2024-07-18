@@ -5,6 +5,9 @@ import com.example.tastezzip.model.response.cafeteria.detail.Video
 object VideoRepositoryImpl: VideoListRepository {
     private var videoList: List<Video> = emptyList()
     private var cafeteriaId: Long = -1
+    var cafeteriaName = ""
+    var cafeteriaAddress = ""
+    var videoCnt = 0
 
     override fun setVideoList(videoList: List<Video>) {
         this.videoList = videoList
