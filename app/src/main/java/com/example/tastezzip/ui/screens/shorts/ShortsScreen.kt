@@ -2,6 +2,7 @@ package com.example.tastezzip.ui.screens.shorts
 
 import android.util.Log
 import android.view.ViewGroup.LayoutParams
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material.Icon
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -57,6 +60,7 @@ fun ShortsScreen(
     lifecycleOwner: LifecycleOwner,
     index: Int
 ) {
+    val context = LocalContext.current
     val videoList = VideoRepositoryImpl.getVideoList()
     val showRatingDialog = remember { mutableStateOf(false) }
     val selectedRating = remember { mutableStateOf(0) }
@@ -75,6 +79,7 @@ fun ShortsScreen(
                     onClick = {
                         viewModel.createVideoRating(videoId.value, selectedRating.value.toDouble())
                         showRatingDialog.value = false
+                        Toast.makeText(context, "평가가 완료되었습니다.", Toast.LENGTH_SHORT).show()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
@@ -154,7 +159,7 @@ fun YoutubeShortsPager(
     ) {page ->
         if (page != pageState.currentPage) return@VerticalPager
         Log.e("페이지 증감 변화", page.toString() + '/' + pageState.currentPage)
-        YoutubeScreen(item = videoList[page], lifecycleOwner, viewModel, onClickBtnReview = onClickBtnReview)
+        YoutubeScreen(item = videoList[page], lifecycleOwner, viewModel, onClickBtnReview = onClickBtnReview, videoCnt = videoList.size)
     }
 }
 
@@ -164,7 +169,8 @@ fun YoutubeScreen(
     lifecycleOwner: LifecycleOwner,
     viewModel: ShortsViewModel = hiltViewModel(),
     bottomSheetViewModel: BottomSheetViewModel = hiltViewModel(),
-    onClickBtnReview: (Long) -> Unit
+    onClickBtnReview: (Long) -> Unit,
+    videoCnt: Int
 ) {
     val ctx = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -216,15 +222,9 @@ fun YoutubeScreen(
                     .background(Color.Transparent)
             ) {
                 if (likeState) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_thumbs_up_filled),
-                        contentDescription = ""
-                    )
+                    Image(painter = painterResource(id = R.drawable.ic_thumbs_up_filled), contentDescription = "")
                 } else {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_thumbs_up),
-                        contentDescription = ""
-                    )
+                    Image(painter = painterResource(id = R.drawable.ic_thumbs_up), contentDescription = "")
                 }
             }
 
@@ -250,20 +250,47 @@ fun YoutubeScreen(
         }
 
         Column(
-            modifier = Modifier.align(Alignment.BottomStart)
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(bottom = 70.dp, start = 15.dp)
         ) {
             CustomText(
-                text = item.title,
+                text = item.cafeteriaResponse.name,
                 fontSize = 20.sp,
                 font = Font(R.font.pretendard_bold),
-                color = Color.Black
+                color = Color.White
             )
+            Spacer(modifier = Modifier.height(5.dp))
             CustomText(
-                text = item.title,
-                fontSize = 20.sp,
+                text = item.cafeteriaResponse.streetAddress,
+                fontSize = 14.sp,
                 font = Font(R.font.pretendard_bold),
-                color = Color.Black
+                color = Color.White
             )
+            Spacer(modifier = Modifier.height(5.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = "", tint = colorResource(id = R.color.shorts_blue))
+                Spacer(modifier = Modifier.width(5.dp))
+                CustomText(
+                    text = "리뷰 영상 ${videoCnt}개",
+                    fontSize = 12.sp,
+                    font = Font(R.font.pretendard_medium),
+                    color = Color.White
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_red_star), contentDescription = "", tint = Color.Unspecified)
+                Spacer(modifier = Modifier.width(5.dp))
+                CustomText(text = item.starAverage.toString(), fontSize = 16.sp, font = Font(R.font.pretendard_regular), color = Color.White)
+                Spacer(modifier = Modifier.width(10.dp))
+                Icon(painter = painterResource(id = R.drawable.ic_trophy), contentDescription = "", tint = Color.Unspecified)
+                Spacer(modifier = Modifier.width(5.dp))
+                CustomText(text = item.trophyCount.toString(), fontSize = 16.sp, font = Font(R.font.pretendard_regular), color = Color.White)
+            }
         }
     }
 }

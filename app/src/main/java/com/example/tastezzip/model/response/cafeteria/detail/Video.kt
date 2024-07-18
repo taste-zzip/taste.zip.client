@@ -1,5 +1,6 @@
 package com.example.tastezzip.model.response.cafeteria.detail
 
+import com.example.tastezzip.model.response.worldcup.CafeteriaResponse
 import com.google.gson.annotations.SerializedName
 
 data class Video(
@@ -24,5 +25,7 @@ data class Video(
     @SerializedName("viewCount")
     val viewCount: Int = 0,
     @SerializedName("accountVideoMapping")
-    val accountVideoMapping: AccountVideoMapping
+    val accountVideoMapping: AccountVideoMapping,
+    @SerializedName("cafeteriaResponse")
+    val cafeteriaResponse: CafeteriaResponse = CafeteriaResponse()
 )

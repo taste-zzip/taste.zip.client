@@ -3,7 +3,7 @@ package com.example.tastezzip.model.response.shorts
 data class Cafeteria(
     val city: String,
     val district: String,
-    val id: Int,
+    val id: Long,
     val landAddress: String,
     val latitude: String,
     val longitude: String,

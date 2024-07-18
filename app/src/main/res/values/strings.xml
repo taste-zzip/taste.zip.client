@@ -21,6 +21,8 @@
     <string name="my_page_bookmark_cafeteria">내가 좋아하는 맛집</string>
     <string name="my_page_withdrawn">회원탈퇴</string>
     <string name="my_page_delete_account">맛.zip에서 탈퇴하시겠습니까?</string>
+    <string name="my_page_delete_bookmark_title">내가 좋아하는 맛집 삭제</string>
+    <string name="my_page_delete_bookmark_content">%s을 내가 좋아하는 맛집에서 삭제하시겠습니까?</string>
 
     <!--  Shorts  -->
     <string name="shorts_rating_dialog_title">영상을 평가해주세요</string>
@@ -30,4 +32,7 @@
     <string name="food_wc_sub_title">취향에 맞는 음식을 골라보세요!\n우승한 음식이 맛집 추천에 도움을 줍니다</string>
     <string name="food_wc_start">월드컵 시작하기</string>
     <string name="food_wc_winner_title">%s 우승!</string>
+
+    <!--  NaverMap  -->
+    <string name="naver_map_dialog_title">%d개의 맛집 영상에 좋아요를 눌렀어요! 영상에 등장하는 맛집을 내가 좋아하는 식당에 추가할까요?</string>
 </resources>
