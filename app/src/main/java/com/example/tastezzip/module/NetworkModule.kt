@@ -1,6 +1,7 @@
 package com.example.tastezzip.module
 
 import android.content.Context
+import android.util.Log
 import com.example.tastezzip.util.BASE_URL
 import com.example.tastezzip.util.UserInfo
 import dagger.Module
@@ -23,10 +24,11 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
         val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val refreshToken = sharedPreferences.getString("refreshToken", null)
         val httpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
         val headerInterceptor = Interceptor{
+            val refreshToken = sharedPreferences.getString("refreshToken", null)
+            Log.e("refreshToken Interceptor", refreshToken.toString())
             val request = it.request()
                 .newBuilder()
                 .addHeader("Authorization", "Bearer $refreshToken")
@@ -34,9 +36,9 @@ object NetworkModule {
             return@Interceptor it.proceed(request)
         }
         return OkHttpClient.Builder()
-            .readTimeout(10, TimeUnit.SECONDS)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(headerInterceptor)
             .build()
