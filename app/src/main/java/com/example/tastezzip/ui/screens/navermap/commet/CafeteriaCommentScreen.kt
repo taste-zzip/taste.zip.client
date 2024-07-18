@@ -1,5 +1,7 @@
 package com.example.tastezzip.ui.screens.navermap.commet
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,14 +23,17 @@ import androidx.compose.material.Icon
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -37,6 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import com.example.tastezzip.R
 import com.example.tastezzip.model.response.cafeteria.detail.CafeteriaDetailResponse
 import com.example.tastezzip.model.response.comment.get.Account
@@ -48,23 +58,28 @@ import com.example.tastezzip.ui.viewmodel.BottomSheetViewModel
 
 @Composable
 fun CafeteriaCommentScreen(viewModel: BottomSheetViewModel = hiltViewModel(), cafeteriaId: Long) {
-    viewModel.getCafeteriaDetail(cafeteriaId)
-    viewModel.getCafeteriaComment(cafeteriaId)
+
+    LaunchedEffect(Unit) {
+        viewModel.getCafeteriaDetail(cafeteriaId)
+        viewModel.getCafeteriaComment(cafeteriaId)
+    }
 
     val cafeteriaDetail by viewModel.cafeteriaDetail.collectAsState()
     val commentList by viewModel.commentList.collectAsState()
     val createComment = { id: Long, content: String ->
         viewModel.createComment(id, content)
     }
+    val profileImage = viewModel.getProfileImage()
 
-    CommentScreen(cafeteriaDetail = cafeteriaDetail, commentList = commentList, createComment)
+    CommentScreen(cafeteriaDetail = cafeteriaDetail, commentList = commentList, createComment, profileImage)
 }
 
 @Composable
 fun CommentScreen(
     cafeteriaDetail: CafeteriaDetailResponse,
     commentList: List<Content>,
-    createComment: (Long, String) -> Unit
+    createComment: (Long, String) -> Unit,
+    profileImage: Uri
 ) {
     val comment = remember { mutableStateOf("") }
 
@@ -124,11 +139,25 @@ fun CommentScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_my_page),
-                        contentDescription = "",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(48.dp, 48.dp)
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.ic_my_page),
+//                        contentDescription = "",
+//                        tint = Color.Gray,
+//                        modifier = Modifier.size(48.dp, 48.dp)
+//                    )
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            ImageRequest.Builder(LocalContext.current)
+                                .data(data = profileImage)
+                                .apply(block = fun ImageRequest.Builder.() {
+                                    transformations(CircleCropTransformation())
+                                    error(R.drawable.ic_my_page) // 에러 발생 시 보여줄 이미지
+                                }).build()
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .then(Modifier)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     TextField(
@@ -175,7 +204,7 @@ fun CommentItem(
                     painter = painterResource(id = R.drawable.ic_my_page),
                     contentDescription = "",
                     tint = Color.Gray,
-                    modifier = Modifier.size(48.dp, 48.dp)
+                    modifier = Modifier.size(48.dp)
                 )
             } else {
                 AsyncImage(
@@ -183,7 +212,8 @@ fun CommentItem(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(48.dp, 48.dp)
+                        .size(48.dp)
+                        .clip(CircleShape)
                 )
             }
             Column(
@@ -206,7 +236,7 @@ fun CommentItem(
                 )
             }
             CustomText(
-                text = item.comment.createdAt,
+                text = item.comment.createdAt.substring(0, 10),
                 fontSize = 12.sp,
                 font = Font(R.font.pretendard_medium),
                 color = Color.Gray
@@ -214,52 +244,5 @@ fun CommentItem(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PreviewCommentScreen() {
-    MainActivityTheme {
-        CommentScreen(
-            cafeteriaDetail = CafeteriaDetailResponse(
-                name = "더진국 중앙대점",
-                type = "국밥 전문점",
-                videoCnt = 20
-            ),
-            commentList = listOf(
-                Content(
-                    account = Account(
-                        bio = "",
-                        id = 1L,
-                        nickname = "오늘만 살자",
-                        profileImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYLJauBsuuhYaRAYccQZ2d-UtBTCOgsHMQmw&s"
-                    ),
-                    comment = Comment(
-                        content = "개맛있음\n개맛있음\n개맛있음\n개맛있음\n개맛있음\n개맛있음",
-                        createdAt = "24.03.30",
-                        updatedAt = "",
-                        id = 1L
-                    )
-                ),
-                Content(
-                    account = Account(
-                        bio = "",
-                        id = 1L,
-                        nickname = "오늘만 살자",
-                        profileImage = ""
-                    ),
-                    comment = Comment(
-                        content = "개맛있음\n개맛있음\n개맛있음\n개맛있음\n개맛있음\n개맛있음",
-                        createdAt = "24.03.30",
-                        updatedAt = "",
-                        id = 1L
-                    )
-                )
-            ),
-            createComment = { Long, String ->
-
-            }
-        )
     }
 }

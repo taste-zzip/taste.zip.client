@@ -4,20 +4,27 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import androidx.compose.runtime.key
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -34,13 +41,17 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tastezzip.R
+import com.example.tastezzip.ui.component.ConfirmDialog
+import com.example.tastezzip.ui.component.CustomText
 import com.example.tastezzip.ui.theme.MainActivityTheme
 import com.example.tastezzip.ui.viewmodel.NaverMapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -72,16 +83,33 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: (Long) -> Unit) 
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     val keyboardController = LocalSoftwareKeyboardController.current
     val cameraPositionState = rememberCameraPositionState{ CameraPosition(LatLng(latitude, longitude), 10.0) }
-    var isInitialPositionSet by remember { mutableStateOf(false) }
     val bookmarkList by viewModel.bookmarkList.collectAsState()
+    val newBookmarkList by viewModel.newBookmarkList.collectAsState()
     val customIcon = OverlayImage.fromResource(R.drawable.ic_bookmarked)
     val customLocationIcon = OverlayImage.fromResource(R.drawable.ic_location_filled_main_stroke_black)
+    val showAddBookmarkDialog by viewModel.showAddBookmarkDialog.collectAsState()
+    val completeAddBookmark by viewModel.completeAddBookmark.collectAsState()
+
+    if (completeAddBookmark) {
+        Toast.makeText(context, "추가되었습니다.", Toast.LENGTH_SHORT).show()
+        viewModel.resetCompleteAddBookmark()
+    }
+
+    if (showAddBookmarkDialog) {
+        val title = stringResource(id = R.string.naver_map_dialog_title, newBookmarkList.size)
+        ConfirmDialog(
+            title = title,
+            content = "",
+            onClickBtnConfirm = {
+                viewModel.addNewBookmark()
+                viewModel.resetShowAddBookmarkDialog()
+            },
+            onClickBtnDismiss = { viewModel.resetShowAddBookmarkDialog() }
+        )
+    }
 
     LaunchedEffect(Unit) {
-        if (!isInitialPositionSet) {
-            initUserPosition(context, fusedLocationClient, viewModel)
-            isInitialPositionSet = true
-        }
+        initUserPosition(context, fusedLocationClient, viewModel)
     }
 
     LaunchedEffect(key1 = Unit) {
@@ -106,111 +134,113 @@ fun NaverMapScreen(viewModel: NaverMapViewModel, onMarkerClick: (Long) -> Unit) 
             MapProperties(
                 maxZoom = 50.0,
                 minZoom = 10.0,
-                locationTrackingMode = LocationTrackingMode.Follow
+                locationTrackingMode = LocationTrackingMode.None
             )
         )
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        NaverMap(
-            locationSource = rememberFusedLocationSource(isCompassEnabled = true),
-            properties = mapProperties,
-            uiSettings = MapUiSettings(
-                isLocationButtonEnabled = true,
-            ),
-            cameraPositionState = cameraPositionState,
-        ) {
-            searchData.forEach {
-                val id = it.id
-                Marker(
-                    state = MarkerState(position = LatLng(it.latitude.toDouble(), it.longitude.toDouble())),
-                    onClick = {
-                        onMarkerClick(id)
-                        true
-                    },
-                    icon = customLocationIcon
-                )
-            }
-
-            bookmarkList.forEach {
-                val id = it.id
-                Marker(
-                    state = MarkerState(position = LatLng(it.latitude.toDouble(), it.longitude.toDouble())),
-                    onClick = {
-                        onMarkerClick(id)
-                        true
-                    },
-                    icon = customIcon
-                )
-            }
-        }
-
+    key(bookmarkList) {
         Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(horizontal = 10.dp)
-                .padding(top = 20.dp)
-                .fillMaxWidth()
-                .background(color = Color.White, shape = RoundedCornerShape(10.dp))
-                .shadow(
-                    elevation = 5.dp, // 그림자 높이
-                    shape = RoundedCornerShape(10.dp), // 그림자 모양
-                    ambientColor = Color.Gray
-                )
+            modifier = Modifier.fillMaxSize()
         ) {
-            TextField(
-                value = searchKeyword,
-                onValueChange = { newData -> viewModel.updateSearchKeyword(newData) },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("찾고 싶은 음식점을 검색해보세요.") },
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = "Search"
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                shape = RoundedCornerShape(10.dp),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        viewModel.searchCafeteria(searchKeyword)
-                        updateCameraPosition(cameraPositionState, LatLng(latitude, longitude), 12.0)
-                        keyboardController?.hide()
-                    }
-                ),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
-            )
-        }
 
-        IconButton(
-            onClick = {
-                viewModel.getNewBookmarkList()
-                viewModel.getBookmarkList()
-            },
-            modifier = Modifier
-                .size(80.dp, 80.dp)
-                .align(Alignment.BottomEnd)
-                .padding(15.dp),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Unspecified,
-                contentColor = Color.Unspecified,
-                disabledContentColor = Color.Unspecified,
-                disabledContainerColor = Color.Unspecified
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.app_icon),
-                contentDescription = "", tint = Color.Unspecified,
-                modifier = Modifier.fillMaxSize()
-            )
+            NaverMap(
+                locationSource = rememberFusedLocationSource(isCompassEnabled = true),
+                properties = mapProperties,
+                uiSettings = MapUiSettings(
+                    isLocationButtonEnabled = true,
+                ),
+                cameraPositionState = cameraPositionState,
+            ) {
+                searchData.forEach {
+                    val id = it.id
+                    Marker(
+                        state = MarkerState(position = LatLng(it.latitude.toDouble(), it.longitude.toDouble())),
+                        onClick = {
+                            onMarkerClick(id)
+                            true
+                        },
+                        icon = customLocationIcon
+                    )
+                }
+
+                bookmarkList.forEach {
+                    val id = it.cafeteria.id
+                    Marker(
+                        state = MarkerState(position = LatLng(it.cafeteria.latitude.toDouble(), it.cafeteria.longitude.toDouble())),
+                        onClick = {
+                            onMarkerClick(id)
+                            true
+                        },
+                        icon = customIcon
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 10.dp)
+                    .padding(top = 20.dp)
+                    .fillMaxWidth()
+                    .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+                    .shadow(
+                        elevation = 5.dp, // 그림자 높이
+                        shape = RoundedCornerShape(10.dp), // 그림자 모양
+                        ambientColor = Color.Gray
+                    )
+            ) {
+                TextField(
+                    value = searchKeyword,
+                    onValueChange = { newData -> viewModel.updateSearchKeyword(newData) },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("찾고 싶은 음식점을 검색해보세요.") },
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_search),
+                            contentDescription = "Search"
+                        )
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.searchCafeteria(searchKeyword)
+                            updateCameraPosition(cameraPositionState, LatLng(latitude, longitude), 12.0)
+                            keyboardController?.hide()
+                        }
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    viewModel.getNewBookmarkList()
+                },
+                modifier = Modifier
+                    .size(80.dp, 80.dp)
+                    .align(Alignment.BottomEnd)
+                    .padding(15.dp),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Unspecified,
+                    contentColor = Color.Unspecified,
+                    disabledContentColor = Color.Unspecified,
+                    disabledContainerColor = Color.Unspecified
+                )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.app_icon),
+                    contentDescription = "", tint = Color.Unspecified,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }
@@ -229,7 +259,15 @@ fun initUserPosition(
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) != PackageManager.PERMISSION_GRANTED
     ) {
-        return
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    viewModel.initUserLocation(37.56300460476657, 126.92152333229693)
+                }
+            }
+            .addOnFailureListener { e ->
+                // 위치 정보 가져오기 실패 처리
+            }
     } else {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
