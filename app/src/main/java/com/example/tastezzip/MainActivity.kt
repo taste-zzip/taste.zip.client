@@ -6,9 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -32,14 +34,17 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
@@ -47,7 +52,10 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.tastezzip.application.LoadingManager
+import com.example.tastezzip.application.MainApplication
 import com.example.tastezzip.navigation.NavBarItems
+import com.example.tastezzip.ui.base.BaseViewModel
 import com.example.tastezzip.ui.screens.foodWc.FoodWorldCup
 import com.example.tastezzip.ui.screens.foodWc.FoodWorldCupGame
 import com.example.tastezzip.ui.screens.mypage.BookmarkCafeteria
@@ -57,19 +65,44 @@ import com.example.tastezzip.ui.screens.navermap.commet.CafeteriaCommentScreen
 import com.example.tastezzip.ui.screens.recommend.RecommendRestaurant
 import com.example.tastezzip.ui.screens.shorts.ShortsScreen
 import com.example.tastezzip.ui.screens.shorts.ShortsTapScreen
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var mainViewModel: MainViewModel
+
+    @Inject
+    lateinit var loadingManager: LoadingManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            MainActivityTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    MainScreen()
+            val isLoading by mainViewModel.isLoading.collectAsState()
+
+            Box(modifier = Modifier.fillMaxSize()) {
+
+                MainActivityTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        MainScreen()
+                    }
+                }
+
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(0x80000000))
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = colorResource(id = R.color.main_color)
+                        )
+                    }
                 }
             }
         }
@@ -142,7 +175,7 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
 
         composable(NavRoutes.NaverMapScreen.route) {
             LaunchedEffect(Unit) { bottomBarState.value = true }
-            BottomSheetLayout(isShorts = isShorts, navController = navController)
+            BottomSheetLayout(navController = navController)
         }
 
         composable(
@@ -160,23 +193,36 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
         }
 
         composable(NavRoutes.RecommendScreen.route) {
+            val onClickVideoItem = { index: Int ->
+                navController.navigate(NavRoutes.StoreShortsScreen.createRoute(index))
+            }
             LaunchedEffect(Unit) { bottomBarState.value = true }
-            RecommendRestaurant()
+            RecommendRestaurant(onClickVideoItem)
         }
 
         composable(NavRoutes.MyPageScreen.route) {
             val onClickBookmarkCafeteria = {
                 navController.navigate(NavRoutes.BookmarkCafeteriaScreen.route)
             }
+            val goToLogin = {
+                navController.navigate(NavRoutes.Login.route) {
+                    popUpTo(NavRoutes.MyPageScreen.route) {
+                        inclusive = true
+                    }
+                }
+            }
             LaunchedEffect(Unit) { bottomBarState.value = true }
-            MyPageScreen(onClickBookmarkCafeteria)
+            MyPageScreen(onClickBookmarkCafeteria, goToLogin)
         }
 
         composable(NavRoutes.BookmarkCafeteriaScreen.route) {
-            LaunchedEffect(key1 = Unit) { bottomBarState.value = true }
-            BookmarkCafeteria {
-                navController.popBackStack()
+            val onClickVideoItem = { index: Int ->
+                navController.navigate(NavRoutes.StoreShortsScreen.createRoute(index))
             }
+            LaunchedEffect(key1 = Unit) { bottomBarState.value = true }
+            BookmarkCafeteria(onClickVideoItem = onClickVideoItem, popBackStack = {
+                navController.popBackStack()
+            })
         }
 
         composable(
@@ -197,8 +243,15 @@ fun NavigationHost(navController: NavHostController, bottomBarState: MutableStat
         }
 
         composable(NavRoutes.FoodWorldCupGame.route) {
+            val onClickBtnGoToHome = {
+                navController.navigate(NavRoutes.NaverMapScreen.route) {
+                    popUpTo(NavRoutes.FoodWorldCupGame.route) {
+                        inclusive = true
+                    }
+                }
+            }
             LaunchedEffect(key1 = Unit) { bottomBarState.value = true }
-            FoodWorldCupGame()
+            FoodWorldCupGame(onClickBtnGoToHome)
         }
     }
 }
