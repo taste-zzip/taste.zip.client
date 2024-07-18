@@ -15,8 +15,6 @@ data class SearchCafeteriaResponse(
     val number: Int,
     @SerializedName("numberOfElements")
     val numberOfElements: Int,
-    @SerializedName("pageable")
-    val pageable: Pageable,
     @SerializedName("size")
     val size: Int,
     @SerializedName("sort")
