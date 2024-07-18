@@ -3,11 +3,13 @@ package com.example.tastezzip.module
 import com.example.tastezzip.data.repository.AccountRepository
 import com.example.tastezzip.data.repository.AuthRepository
 import com.example.tastezzip.data.repository.CafeteriaRepository
+import com.example.tastezzip.data.repository.TestCafeteriaRepository
 import com.example.tastezzip.data.repository.VideoRepository
 import com.example.tastezzip.data.repository.YoutubeRepository
 import com.example.tastezzip.data.repositoryImpl.AccountRepositoryImpl
 import com.example.tastezzip.data.repositoryImpl.AuthRepositoryImpl
 import com.example.tastezzip.data.repositoryImpl.CafeteriaRepositoryImpl
+import com.example.tastezzip.data.repositoryImpl.TestCafeteriaRepositoryImpl
 import com.example.tastezzip.data.repositoryImpl.VideoRepositoryImpl
 import com.example.tastezzip.data.repositoryImpl.YoutubeRepositoryImpl
 import dagger.Binds
@@ -38,4 +40,8 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun providesAccountRepository(repositoryImpl: AccountRepositoryImpl): AccountRepository
+
+    @Singleton
+    @Binds
+    abstract fun providesTestCafeteriaRepository(repositoryImpl: TestCafeteriaRepositoryImpl): TestCafeteriaRepository
 }
