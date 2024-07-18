@@ -57,17 +57,22 @@ fun Splash(navController: NavHostController, loginViewModel: LoginViewModel = hi
         
         LaunchedEffect(Unit) {
             delay(2000)
-            if (loginViewModel.hasAccessToken()) {
-                navController.navigate(NavRoutes.NaverMapScreen.route) {
-                    popUpTo(NavRoutes.Splash.route) {
-                        inclusive = true
-                    }
-                }
-            } else {
-                navController.navigate(NavRoutes.Login.route) {
-                    popUpTo(NavRoutes.Splash.route) {
-                        inclusive = true
-                    }
+//            if (loginViewModel.hasAccessToken()) {
+//                navController.navigate(NavRoutes.NaverMapScreen.route) {
+//                    popUpTo(NavRoutes.Splash.route) {
+//                        inclusive = true
+//                    }
+//                }
+//            } else {
+//                navController.navigate(NavRoutes.Login.route) {
+//                    popUpTo(NavRoutes.Splash.route) {
+//                        inclusive = true
+//                    }
+//                }
+//            }
+            navController.navigate(NavRoutes.Login.route) {
+                popUpTo(NavRoutes.Splash.route) {
+                    inclusive = true
                 }
             }
         }

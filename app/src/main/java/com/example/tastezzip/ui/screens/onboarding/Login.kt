@@ -48,12 +48,6 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel = hil
     ) {
         loginViewModel.handleGoogleLoginResult(it.data)
     }
-    val loginSuccess = loginViewModel.loginSuccess.collectAsState()
-    val errorMessage = loginViewModel.errorMessage.collectAsState()
-
-    LaunchedEffect(loginSuccess.value) {
-        Toast.makeText(context, errorMessage.value, Toast.LENGTH_SHORT).show()
-    }
 
     LaunchedEffect(key1 = true) {
         loginViewModel.loginEventFlow.collect {
