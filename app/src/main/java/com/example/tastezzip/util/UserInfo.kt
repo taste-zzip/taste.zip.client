@@ -1,9 +1,11 @@
 package com.example.tastezzip.util
 
-object UserInfo {
+import android.net.Uri
+
+class UserInfo {
     var userId: Long? = null
     var authCode: String = ""
     var accessToken: String = ""
     var refreshToken: String = ""
-    var profileImage: String = ""
+    lateinit var profileImage: Uri
 }
