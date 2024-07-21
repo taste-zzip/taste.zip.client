@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -18,10 +19,17 @@ dependencyResolutionManagement {
         mavenCentral()
 
         maven{
-            url = uri("https://naver.jfrog.io/artifactory/maven/")
+            url = uri("https://repository.map.naver.com/archive/maven")
         }
     }
 }
 
 rootProject.name = "MainActivity"
-include(":app")
+include(
+    ":app"
+
+
+)
+include(":data")
+include(":domain")
+include(":presentation")
