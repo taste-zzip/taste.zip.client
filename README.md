@@ -16,6 +16,7 @@ https://github.com/user-attachments/assets/7408f2c9-ebd1-45a3-9234-a5b3beb1f134
 https://github.com/user-attachments/assets/bd3167f8-f41b-4c36-a241-279874eb6070
 
 # ⚒️ 기술 스택
+- Clean Architecture
 - Compose
 - MVVM
 - Android View
