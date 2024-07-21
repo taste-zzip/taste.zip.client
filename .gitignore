@@ -13,6 +13,7 @@ app/assetlinks.json
 .idea/misc.xml
 .idea/deploymentTargetSelector.xml
 .idea/gradle.xml
+.idea/kotlinc.xml
 .DS_Store
 /build
 /captures
