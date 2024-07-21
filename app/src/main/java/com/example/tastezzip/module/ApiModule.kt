@@ -3,6 +3,7 @@ package com.example.tastezzip.module
 import com.example.tastezzip.data.api.AccountApi
 import com.example.tastezzip.data.api.AuthApi
 import com.example.tastezzip.data.api.CafeteriaApi
+import com.example.tastezzip.data.api.TestCafeteriaApi
 import com.example.tastezzip.data.api.VideoApi
 import com.example.tastezzip.data.api.YoutubeApi
 import dagger.Module
@@ -54,5 +55,13 @@ object ApiModule {
         retrofit: Retrofit
     ): AccountApi {
         return retrofit.create(AccountApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTestCafeteriaApi(
+        retrofit: Retrofit
+    ): TestCafeteriaApi {
+        return retrofit.create(TestCafeteriaApi::class.java)
     }
 }

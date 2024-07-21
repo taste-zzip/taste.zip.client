@@ -52,6 +52,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":data"))
+    implementation(project(":domain"))
+    implementation(project(":presentation"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -65,7 +68,7 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.6.7")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    implementation("com.google.android.gms:play-services-auth:21.1.1")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
@@ -78,7 +81,7 @@ dependencies {
 
     implementation("io.github.fornewid:naver-map-compose:1.5.5")
     implementation("io.github.fornewid:naver-map-location:21.0.1")
-    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
     implementation("com.naver.maps:map-sdk:3.16.2")
 
